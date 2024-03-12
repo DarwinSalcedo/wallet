@@ -1,117 +1,100 @@
 package com.mobile.wallet.presentation
 
 import androidx.compose.foundation.background
-import androidx.compose.foundation.layout.Arrangement
 import androidx.compose.foundation.layout.Box
 import androidx.compose.foundation.layout.Column
-import androidx.compose.foundation.layout.PaddingValues
 import androidx.compose.foundation.layout.Spacer
 import androidx.compose.foundation.layout.fillMaxSize
-import androidx.compose.foundation.layout.fillMaxWidth
 import androidx.compose.foundation.layout.height
-import androidx.compose.foundation.layout.heightIn
 import androidx.compose.foundation.layout.padding
-import androidx.compose.foundation.shape.RoundedCornerShape
-import androidx.compose.material3.Button
-import androidx.compose.material3.ButtonDefaults
+import androidx.compose.material3.CircularProgressIndicator
 import androidx.compose.material3.Surface
-import androidx.compose.material3.Text
 import androidx.compose.runtime.Composable
 import androidx.compose.ui.Alignment
 import androidx.compose.ui.Modifier
-import androidx.compose.ui.graphics.Brush
 import androidx.compose.ui.graphics.Color
-import androidx.compose.ui.text.font.FontWeight
+import androidx.compose.ui.res.painterResource
+import androidx.compose.ui.res.stringResource
 import androidx.compose.ui.unit.dp
-import androidx.compose.ui.unit.sp
+import androidx.lifecycle.viewmodel.compose.viewModel
 import androidx.navigation.NavHostController
-import androidx.navigation.NavOptions
+import com.mobile.wallet.R
+import com.mobile.wallet.data.login.LoginUIEvent
+import com.mobile.wallet.data.login.LoginViewModel
+import com.mobile.wallet.data.navigation.Screen
+import com.mobile.wallet.presentation.components.ButtonComponent
+import com.mobile.wallet.presentation.components.ClickableLoginTextComponent
+import com.mobile.wallet.presentation.components.DividerTextComponent
+import com.mobile.wallet.presentation.components.HeadingTextComponent
+import com.mobile.wallet.presentation.components.MyTextFieldComponent
+import com.mobile.wallet.presentation.components.NormalTextComponent
+import com.mobile.wallet.presentation.components.PasswordTextFieldComponent
 
 @Composable
-fun LoginScreen(navController: NavHostController) {
-    Surface(
-        modifier = Modifier
-            .fillMaxSize()
-            .background(color = Color.White)
-            .padding(16.dp)
+fun LoginScreen(navController: NavHostController, loginViewModel: LoginViewModel = viewModel()) {
+
+    Box(
+        modifier = Modifier.fillMaxSize(), contentAlignment = Alignment.Center
     ) {
-        Column(Modifier.fillMaxSize(), verticalArrangement = Arrangement.Center) {
-            Text("Login")
 
-            Button(
-                modifier = Modifier
-                    .fillMaxWidth()
-                    .height(48.dp)
-                    .background(Color.Blue),
-                onClick = {
+        Surface(
+            modifier = Modifier
+                .fillMaxSize()
+                .background(Color.White)
+                .padding(28.dp)
+        ) {
 
-                    navController.navigate(
-                        "home",
-                        NavOptions.Builder().setPopUpTo("home", inclusive = true).build()
-
-                    )
-                },
-                contentPadding = PaddingValues(),
-                colors = ButtonDefaults.buttonColors(Color.Transparent),
-                shape = RoundedCornerShape(50.dp)
+            Column(
+                modifier = Modifier.fillMaxSize()
             ) {
-                Box(
-                    modifier = Modifier
-                        .fillMaxWidth()
-                        .heightIn(48.dp)
-                        .background(
-                            brush = Brush.horizontalGradient(listOf(Color.Cyan, Color.Blue)),
-                            shape = RoundedCornerShape(50.dp)
-                        ),
-                    contentAlignment = Alignment.Center
-                ) {
-                    Text(
-                        text = "Text",
-                        fontSize = 18.sp,
-                        color = Color.White,
-                        fontWeight = FontWeight.Bold
-                    )
 
-                }
+                NormalTextComponent(value = stringResource(id = R.string.login))
+                HeadingTextComponent(value = stringResource(id = R.string.title))
+                Spacer(modifier = Modifier.height(20.dp))
 
-            }
-            Spacer(modifier = Modifier.height(20.dp))
-            Button(
-                modifier = Modifier
-                    .fillMaxWidth()
-                    .height(48.dp)
-                    .background(Color.Red),
-                onClick = {
+                MyTextFieldComponent(
+                    labelValue = stringResource(id = R.string.email),
+                    painterResource(id = R.drawable.baseline_alternate_email_24),
+                    onTextChanged = {
+                        loginViewModel.onEvent(LoginUIEvent.EmailChanged(it))
+                    },
+                    errorStatus = loginViewModel.loginUIState.value.emailError
+                )
 
-                    navController.navigate("signup")
+                PasswordTextFieldComponent(
+                    labelValue = stringResource(id = R.string.password),
+                    painterResource(id = R.drawable.baseline_lock_outline_24),
+                    onTextSelected = {
+                        loginViewModel.onEvent(LoginUIEvent.PasswordChanged(it))
+                    },
+                    errorStatus = loginViewModel.loginUIState.value.passwordError
+                )
 
-                },
-                contentPadding = PaddingValues(),
-                colors = ButtonDefaults.buttonColors(Color.Transparent),
-                shape = RoundedCornerShape(50.dp)
-            ) {
-                Box(
-                    modifier = Modifier
-                        .fillMaxWidth()
-                        .heightIn(48.dp)
-                        .background(
-                            brush = Brush.horizontalGradient(listOf(Color.Cyan, Color.Blue)),
-                            shape = RoundedCornerShape(50.dp)
-                        ),
-                    contentAlignment = Alignment.Center
-                ) {
-                    Text(
-                        text = "Text",
-                        fontSize = 18.sp,
-                        color = Color.White,
-                        fontWeight = FontWeight.Bold
-                    )
 
-                }
+                Spacer(modifier = Modifier.height(40.dp))
 
+                ButtonComponent(
+                    value = stringResource(id = R.string.login), onButtonClicked = {
+                        loginViewModel.onEvent(LoginUIEvent.LoginButtonClicked)
+                    }, isEnabled = loginViewModel.allValidationsPassed.value
+                )
+
+                Spacer(modifier = Modifier.height(20.dp))
+
+                DividerTextComponent()
+
+                ClickableLoginTextComponent(tryingToLogin = false, onTextSelected = {
+                    navController.navigate(Screen.SignUp.id)
+                })
             }
         }
 
+        if (loginViewModel.loginInProgress.value) {
+            CircularProgressIndicator()
+        }
+        if (loginViewModel.navigate.value) {
+            navController.navigate(Screen.Home.id)
+        }
     }
 
 

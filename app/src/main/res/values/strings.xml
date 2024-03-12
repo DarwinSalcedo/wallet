@@ -1,3 +1,10 @@
 <resources>
     <string name="app_name">Wallet-app</string>
+    <string name="login">LogIn</string>
+    <string name="title">Main title</string>
+    <string name="email">Whats your email</string>
+    <string name="message">Whats your email1</string>
+    <string name="password">Whats your email1</string>
+    <string name="hide">hide</string>
+    <string name="show">show</string>
 </resources>
