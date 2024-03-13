@@ -48,6 +48,7 @@ import androidx.compose.ui.text.withStyle
 import androidx.compose.ui.unit.dp
 import androidx.compose.ui.unit.sp
 import com.mobile.wallet.R
+import com.mobile.wallet.data.login.EditTextState
 
 @Composable
 fun NormalTextComponent(value: String) {
@@ -83,10 +84,10 @@ fun HeadingTextComponent(value: String) {
 
 @OptIn(ExperimentalMaterial3Api::class)
 @Composable
-fun MyTextFieldComponent(
+fun TextFieldComponent(
     labelValue: String, painterResource: Painter,
     onTextChanged: (String) -> Unit,
-    errorStatus: Boolean = false
+    errorStatus: EditTextState = EditTextState.Init
 ) {
 
     val textValue = remember {
@@ -96,13 +97,12 @@ fun MyTextFieldComponent(
 
     OutlinedTextField(
         modifier = Modifier
-            .fillMaxWidth()
-            ,
+            .fillMaxWidth(),
         label = { Text(text = labelValue) },
         colors = TextFieldDefaults.outlinedTextFieldColors(
             focusedBorderColor = Color.Transparent,
             focusedLabelColor = Color.Gray,
-            cursorColor =  Color.Gray
+            cursorColor = Color.Gray
         ),
         keyboardOptions = KeyboardOptions(imeAction = ImeAction.Next),
         singleLine = true,
@@ -115,7 +115,7 @@ fun MyTextFieldComponent(
         leadingIcon = {
             Icon(painter = painterResource, contentDescription = "")
         },
-        isError = !errorStatus
+        isError = (errorStatus == EditTextState.Error)
     )
 }
 
@@ -125,7 +125,7 @@ fun MyTextFieldComponent(
 fun PasswordTextFieldComponent(
     labelValue: String, painterResource: Painter,
     onTextSelected: (String) -> Unit,
-    errorStatus: Boolean = false
+    errorStatus: EditTextState = EditTextState.Init
 ) {
 
     val localFocusManager = LocalFocusManager.current
@@ -144,7 +144,7 @@ fun PasswordTextFieldComponent(
         colors = TextFieldDefaults.outlinedTextFieldColors(
             focusedBorderColor = Color.Transparent,
             focusedLabelColor = Color.Gray,
-            cursorColor =  Color.Gray
+            cursorColor = Color.Gray
         ),
         keyboardOptions = KeyboardOptions(
             keyboardType = KeyboardType.Password,
@@ -183,42 +183,8 @@ fun PasswordTextFieldComponent(
 
         },
         visualTransformation = if (passwordVisible.value) VisualTransformation.None else PasswordVisualTransformation(),
-        isError = !errorStatus
+        isError = (errorStatus == EditTextState.Error)
     )
-}
-
-@Composable
-fun ClickableTextComponent(value: String, onTextSelected: (String) -> Unit) {
-    val initialText = "By continuing you accept our "
-    val privacyPolicyText = "Privacy Policy"
-    val andText = " and "
-    val termsAndConditionsText = "Term of Use"
-
-    val annotatedString = buildAnnotatedString {
-        append(initialText)
-        withStyle(style = SpanStyle(color = Color.Gray)) {
-            pushStringAnnotation(tag = privacyPolicyText, annotation = privacyPolicyText)
-            append(privacyPolicyText)
-        }
-        append(andText)
-        withStyle(style = SpanStyle(color = Color.Gray)) {
-            pushStringAnnotation(tag = termsAndConditionsText, annotation = termsAndConditionsText)
-            append(termsAndConditionsText)
-        }
-    }
-
-    ClickableText(text = annotatedString, onClick = { offset ->
-
-        annotatedString.getStringAnnotations(offset, offset)
-            .firstOrNull()?.also { span ->
-                Log.d("ClickableTextComponent", "{${span.item}}")
-
-                if ((span.item == termsAndConditionsText) || (span.item == privacyPolicyText)) {
-                    onTextSelected(span.item)
-                }
-            }
-
-    })
 }
 
 @Composable

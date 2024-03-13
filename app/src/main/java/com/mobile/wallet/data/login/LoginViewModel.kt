@@ -1,6 +1,5 @@
 package com.mobile.wallet.data.login
 
-import android.util.Log
 import androidx.compose.runtime.mutableStateOf
 import androidx.lifecycle.ViewModel
 import com.mobile.wallet.data.rules.Validator
@@ -50,8 +49,8 @@ class LoginViewModel : ViewModel() {
         )
 
         loginUIState.value = loginUIState.value.copy(
-            emailError = emailResult.status,
-            passwordError = passwordResult.status
+            emailError = if (emailResult.status) EditTextState.Success else EditTextState.Error,
+            passwordError = if (passwordResult.status) EditTextState.Success else EditTextState.Error
         )
 
         allValidationsPassed.value = emailResult.status && passwordResult.status

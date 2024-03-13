@@ -26,7 +26,7 @@ import com.mobile.wallet.presentation.components.ButtonComponent
 import com.mobile.wallet.presentation.components.ClickableLoginTextComponent
 import com.mobile.wallet.presentation.components.DividerTextComponent
 import com.mobile.wallet.presentation.components.HeadingTextComponent
-import com.mobile.wallet.presentation.components.MyTextFieldComponent
+import com.mobile.wallet.presentation.components.TextFieldComponent
 import com.mobile.wallet.presentation.components.NormalTextComponent
 import com.mobile.wallet.presentation.components.PasswordTextFieldComponent
 
@@ -48,11 +48,10 @@ fun LoginScreen(navController: NavHostController, loginViewModel: LoginViewModel
                 modifier = Modifier.fillMaxSize()
             ) {
 
-                NormalTextComponent(value = stringResource(id = R.string.login))
                 HeadingTextComponent(value = stringResource(id = R.string.title))
                 Spacer(modifier = Modifier.height(20.dp))
 
-                MyTextFieldComponent(
+                TextFieldComponent(
                     labelValue = stringResource(id = R.string.email),
                     painterResource(id = R.drawable.baseline_alternate_email_24),
                     onTextChanged = {

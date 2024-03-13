@@ -18,7 +18,7 @@ object Validator {
 
     fun validateEmail(email: String): ValidationResult {
         return ValidationResult(
-            (!email.isNullOrEmpty())
+            (email.isNotEmpty() && email.contains("@"))
         )
     }
 
@@ -28,9 +28,9 @@ object Validator {
         )
     }
 
-    fun validatePrivacyPolicyAcceptance(statusValue: Boolean): ValidationResult {
+    fun validatePhotoId(path: String): ValidationResult {
         return ValidationResult(
-            statusValue
+            path.isNotEmpty()
         )
     }
 

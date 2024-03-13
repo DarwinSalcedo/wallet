@@ -1,10 +1,16 @@
 package com.mobile.wallet.data.login
 
 data class LoginUIState(
-    var email  :String = "",
-    var password  :String = "",
+    var email: String = "",
+    var password: String = "",
 
-    var emailError :Boolean = false,
-    var passwordError : Boolean = false
+    var emailError: EditTextState = EditTextState.Init,
+    var passwordError: EditTextState = EditTextState.Init
 
 )
+
+sealed class EditTextState() {
+     object Init : EditTextState()
+    object Success : EditTextState()
+    object Error : EditTextState()
+}

@@ -1,10 +1,19 @@
 <resources>
-    <string name="app_name">Wallet-app</string>
-    <string name="login">LogIn</string>
-    <string name="title">Main title</string>
-    <string name="email">Whats your email</string>
-    <string name="message">Whats your email1</string>
-    <string name="password">Whats your email1</string>
+    <string name="app_name">Fake-Bank</string>
+    <string name="login">Log-In</string>
+    <string name="title">Fake-Bank</string>
+    <string name="email">Your email</string>
+    <string name="message">Check this field</string>
+    <string name="password">Your pass</string>
     <string name="hide">hide</string>
     <string name="show">show</string>
+    <string name="lets_go">Lets rock together with Fake-Bank, in just 2 steps</string>
+    <string name="taking_id">We need an image of your Id to validate to continue..</string>
+    <string name="register">Create an account</string>
+    <string name="photo_step">Next step</string>
+    <string name="take_photo">Take a photo</string>
+    <string name="name_register">Name</string>
+    <string name="surname_register">Surname</string>
+    <string name="email_register">Email</string>
+    <string name="password_register">Password</string>
 </resources>
