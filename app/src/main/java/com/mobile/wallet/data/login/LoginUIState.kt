@@ -6,11 +6,10 @@ data class LoginUIState(
 
     var emailError: EditTextState = EditTextState.Init,
     var passwordError: EditTextState = EditTextState.Init
-
 )
 
 sealed class EditTextState() {
-     object Init : EditTextState()
+    object Init : EditTextState()
     object Success : EditTextState()
     object Error : EditTextState()
 }

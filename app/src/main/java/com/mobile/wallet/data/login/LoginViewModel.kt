@@ -1,8 +1,14 @@
 package com.mobile.wallet.data.login
 
+import android.util.Log
 import androidx.compose.runtime.mutableStateOf
 import androidx.lifecycle.ViewModel
+import androidx.lifecycle.viewModelScope
 import com.mobile.wallet.data.rules.Validator
+import com.mobile.wallet.domain.FirebaseRepository
+import com.mobile.wallet.domain.FirebaseRepositoryImpl
+import com.mobile.wallet.domain.Result
+import kotlinx.coroutines.launch
 
 class LoginViewModel : ViewModel() {
 
@@ -15,6 +21,8 @@ class LoginViewModel : ViewModel() {
     var loginInProgress = mutableStateOf(false)
 
     var navigate = mutableStateOf(false)
+
+    private var repository: FirebaseRepository = FirebaseRepositoryImpl()
 
 
     fun onEvent(event: LoginUIEvent) {
@@ -58,13 +66,27 @@ class LoginViewModel : ViewModel() {
     }
 
     private fun login() {
+        viewModelScope.launch {
 
-        loginInProgress.value = true
-        val email = loginUIState.value.email
-        val password = loginUIState.value.password
 
-        navigate.value = true
+            loginInProgress.value = true
+            val email = loginUIState.value.email
+            val password = loginUIState.value.password
 
+
+            when (val result = repository.login(email, password)) {
+
+                is Result.Failure -> {
+                    loginInProgress.value = false
+                }
+
+                is Result.Success -> {
+                    navigate.value = true
+                    loginInProgress.value = false
+                }
+            }
+
+        }
     }
 
 }

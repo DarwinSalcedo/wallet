@@ -3,7 +3,6 @@ package com.mobile.wallet.presentation
 import android.Manifest
 import android.content.Context
 import android.content.pm.PackageManager
-import android.net.Uri
 import android.widget.Toast
 import androidx.activity.compose.rememberLauncherForActivityResult
 import androidx.activity.result.contract.ActivityResultContracts
@@ -47,13 +46,14 @@ import com.mobile.wallet.presentation.components.ButtonComponent
 import com.mobile.wallet.presentation.components.HeadingTextComponent
 import com.mobile.wallet.presentation.components.NormalTextComponent
 import java.io.File
-import java.text.SimpleDateFormat
-import java.util.Date
 import java.util.Objects
 
 
 @Composable
 fun PhotoScreen(navController: NavHostController, photoViewModel: PhotoViewModel = viewModel()) {
+    val uuid =
+        navController.previousBackStackEntry?.savedStateHandle?.get<String>("uuid")
+    photoViewModel.setUuid(uuid)
 
     Surface(
         modifier = Modifier
@@ -96,18 +96,16 @@ fun PhotoScreen(navController: NavHostController, photoViewModel: PhotoViewModel
             )
 
             var capturedImageUri by remember {
-                mutableStateOf<Uri>(Uri.EMPTY)
+                mutableStateOf<Boolean>(false)
             }
 
 
             val cameraLauncher =
                 rememberLauncherForActivityResult(ActivityResultContracts.TakePicture()) {
-
+                    capturedImageUri = it
                     if (it) {
-                        capturedImageUri = uri
-                        photoViewModel.onEvent(PhotoUIEvent.PictureTaken)
+                        photoViewModel.onEvent(PhotoUIEvent.PictureTaken(uri))
                     }
-
                 }
 
 
@@ -131,12 +129,11 @@ fun PhotoScreen(navController: NavHostController, photoViewModel: PhotoViewModel
                 verticalArrangement = Arrangement.Bottom
             ) {
 
-                if (capturedImageUri.path?.isNotEmpty() == true) {
-                    println("capturedImageUri:: ->" + capturedImageUri)
+                if (capturedImageUri) {
                     Image(
                         modifier = Modifier
                             .padding(16.dp, 8.dp),
-                        painter = painterResource(id = R.drawable.baseline_add_a_photo_24),
+                        painter = painterResource(id = R.drawable.baseline_assignment_turned_in_24),
                         contentDescription = null
                     )
                 } else {

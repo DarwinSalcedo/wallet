@@ -1,9 +1,13 @@
 package com.mobile.wallet.data.photo
 
+import android.net.Uri
 import androidx.compose.runtime.mutableStateOf
 import androidx.lifecycle.ViewModel
-import com.mobile.wallet.data.User
-import com.mobile.wallet.data.rules.Validator
+import androidx.lifecycle.viewModelScope
+import com.mobile.wallet.domain.FirebaseRepository
+import com.mobile.wallet.domain.FirebaseRepositoryImpl
+import com.mobile.wallet.domain.Result
+import kotlinx.coroutines.launch
 
 
 class PhotoViewModel : ViewModel() {
@@ -12,52 +16,49 @@ class PhotoViewModel : ViewModel() {
 
     var uIState = mutableStateOf(PhotoUIState())
 
-    var allValidationsPassed = mutableStateOf(false)
-
-    var inProgress = mutableStateOf(false)
+    var progress = mutableStateOf(false)
 
     var navigate = mutableStateOf(false)
 
-    init {
-        //
-        uIState.value = uIState.value.copy(
-            photoId = "1234"
-        )
-    }
+    private var repository: FirebaseRepository = FirebaseRepositoryImpl()
+
 
     fun onEvent(event: PhotoUIEvent) {
         when (event) {
             is PhotoUIEvent.PictureTaken -> {
-                navigate.value = true
+
+                storePhotoInFirebase(uIState.value.photoId, event.uri)
             }
         }
-        //validateDataWithRules()
     }
 
 
-    private fun validateDataWithRules() {
+    private fun storePhotoInFirebase(uuid: String, uri: Uri) {
+
+        viewModelScope.launch {
+
+            repository.storeImage(uuid, uri).collect {
+
+                when (it) {
+                    is Result.Failure -> {
+                        progress.value = false
+                    }
+
+                    is Result.Success -> {
+                        progress.value = true
+                        navigate.value = true
+                    }
+                }
+            }
+        }
 
 
-        val result = Validator.validatePhotoId(
-            path = uIState.value.photoId
-        )
+    }
 
+    fun setUuid(uuid: String?) {
         uIState.value = uIState.value.copy(
-            photoIdError = result.status
+            photoId = uuid ?: ""
         )
-
-        allValidationsPassed.value = result.status
-
     }
-
-
-    private fun storePhotoInFirebase(user: User) {
-
-        inProgress.value = true
-        navigate.value = true
-
-
-    }
-
 
 }

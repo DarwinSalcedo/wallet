@@ -26,6 +26,7 @@ import androidx.compose.material3.TextFieldDefaults
 import androidx.compose.runtime.Composable
 import androidx.compose.runtime.mutableStateOf
 import androidx.compose.runtime.remember
+import androidx.compose.runtime.saveable.rememberSaveable
 import androidx.compose.ui.Alignment
 import androidx.compose.ui.Modifier
 import androidx.compose.ui.graphics.Brush
@@ -90,10 +91,9 @@ fun TextFieldComponent(
     errorStatus: EditTextState = EditTextState.Init
 ) {
 
-    val textValue = remember {
+    val textValue = rememberSaveable {
         mutableStateOf("")
     }
-    val localFocusManager = LocalFocusManager.current
 
     OutlinedTextField(
         modifier = Modifier

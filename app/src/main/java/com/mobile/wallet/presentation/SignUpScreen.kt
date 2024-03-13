@@ -40,8 +40,7 @@ import com.mobile.wallet.presentation.components.TextFieldComponent
 @Composable
 fun SignUpScreen(navController: NavHostController, signupViewModel: SignupViewModel = viewModel()) {
     Box(
-        modifier = Modifier.fillMaxSize(),
-        contentAlignment = Alignment.Center
+        modifier = Modifier.fillMaxSize(), contentAlignment = Alignment.Center
     ) {
 
         Surface(
@@ -61,8 +60,7 @@ fun SignUpScreen(navController: NavHostController, signupViewModel: SignupViewMo
                         .background(
                             brush = Brush.horizontalGradient(listOf(Color.Gray, Color.DarkGray)),
                             shape = RoundedCornerShape(50.dp)
-                        ),
-                    contentAlignment = Alignment.Center
+                        ), contentAlignment = Alignment.Center
                 ) {
                     Text(
                         text = "1",
@@ -115,11 +113,9 @@ fun SignUpScreen(navController: NavHostController, signupViewModel: SignupViewMo
                 Spacer(modifier = Modifier.height(40.dp))
 
                 ButtonComponent(
-                    value = stringResource(id = R.string.photo_step),
-                    onButtonClicked = {
-                        navController.navigate(Screen.Photo.id)
-                    },
-                    isEnabled = signupViewModel.allValidationsPassed.value
+                    value = stringResource(id = R.string.photo_step), onButtonClicked = {
+                        signupViewModel.onEvent(SignupUIEvent.RegisterButtonClicked)
+                    }, isEnabled = signupViewModel.allValidationsPassed.value
                 )
 
                 Spacer(modifier = Modifier.height(20.dp))
@@ -127,15 +123,20 @@ fun SignUpScreen(navController: NavHostController, signupViewModel: SignupViewMo
                 DividerTextComponent()
 
                 ClickableLoginTextComponent(tryingToLogin = true, onTextSelected = {
-                 //   navController.popBackStack()
-                    navController.navigate(Screen.Photo.id)
+                    navController.popBackStack()
                 })
             }
 
         }
 
-        if (signupViewModel.signUpInProgress.value) {
+        if (signupViewModel.progress.value) {
             CircularProgressIndicator()
+        }
+
+        if (signupViewModel.navigate.value) {
+            navController.currentBackStackEntry?.savedStateHandle?.set("uuid", signupViewModel.uuid.value)
+            navController.navigate(Screen.Photo.id,)
+            signupViewModel.resetPostNavigation()
         }
 
     }
