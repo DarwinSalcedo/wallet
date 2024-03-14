@@ -16,4 +16,8 @@
     <string name="surname_register">Surname</string>
     <string name="email_register">Email</string>
     <string name="password_register">Password</string>
+    <string name="welcome">Welcome onBoard</string>
+    <string name="welcome_message">Your account has been created successfully</string>
+
+
 </resources>

@@ -1,4 +1,4 @@
-package com.mobile.wallet.data.photo
+package com.mobile.wallet.domain.photo
 
 data class PhotoUIState(
     var photoId: String = "",

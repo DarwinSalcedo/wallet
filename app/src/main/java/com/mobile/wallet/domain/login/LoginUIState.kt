@@ -1,4 +1,4 @@
-package com.mobile.wallet.data.login
+package com.mobile.wallet.domain.login
 
 data class LoginUIState(
     var email: String = "",

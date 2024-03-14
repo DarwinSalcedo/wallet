@@ -5,17 +5,15 @@ import androidx.activity.ComponentActivity
 import androidx.activity.compose.setContent
 import androidx.compose.foundation.background
 import androidx.compose.foundation.layout.fillMaxSize
-import androidx.compose.foundation.layout.padding
 import androidx.compose.material3.Surface
 import androidx.compose.runtime.Composable
 import androidx.compose.ui.Modifier
 import androidx.compose.ui.graphics.Color
-import androidx.compose.ui.unit.dp
 import androidx.navigation.NavHostController
 import androidx.navigation.compose.NavHost
 import androidx.navigation.compose.composable
 import androidx.navigation.compose.rememberNavController
-import com.mobile.wallet.data.navigation.Screen
+import com.mobile.wallet.domain.navigation.Screen
 import com.mobile.wallet.ui.theme.WalletappTheme
 
 class MainActivity : ComponentActivity() {
@@ -40,14 +38,13 @@ fun MainNavigation(navController: NavHostController = rememberNavController()) {
 
     NavHost(
         navController = navController,
-        startDestination = Screen.Login.id
+        startDestination = Screen.Login.id,
     ) {
         composable(Screen.Login.id) { LoginScreen(navController) }
         composable(Screen.SignUp.id) { SignUpScreen(navController) }
         composable(Screen.Photo.id) { PhotoScreen(navController) }
         composable(Screen.Success.id) { SuccessScreen(navController) }
         composable(Screen.Home.id) { HomeScreen() }
-
     }
 }
 

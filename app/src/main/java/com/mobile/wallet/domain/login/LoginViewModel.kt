@@ -1,13 +1,13 @@
-package com.mobile.wallet.data.login
+package com.mobile.wallet.domain.login
 
-import android.util.Log
 import androidx.compose.runtime.mutableStateOf
 import androidx.lifecycle.ViewModel
 import androidx.lifecycle.viewModelScope
-import com.mobile.wallet.data.rules.Validator
-import com.mobile.wallet.domain.FirebaseRepository
-import com.mobile.wallet.domain.FirebaseRepositoryImpl
-import com.mobile.wallet.domain.Result
+import com.mobile.wallet.data.FirebaseRepository
+import com.mobile.wallet.data.FirebaseRepositoryImpl
+import com.mobile.wallet.data.Result
+import com.mobile.wallet.domain.rules.Validator
+import kotlinx.coroutines.flow.MutableStateFlow
 import kotlinx.coroutines.launch
 
 class LoginViewModel : ViewModel() {
@@ -17,6 +17,8 @@ class LoginViewModel : ViewModel() {
     var loginUIState = mutableStateOf(LoginUIState())
 
     var allValidationsPassed = mutableStateOf(false)
+
+    var errorLoginMessage = MutableStateFlow("")
 
     var loginInProgress = mutableStateOf(false)
 
@@ -73,18 +75,22 @@ class LoginViewModel : ViewModel() {
             val email = loginUIState.value.email
             val password = loginUIState.value.password
 
+            repository.login(email, password).collect {
+                when (val result = it) {
 
-            when (val result = repository.login(email, password)) {
+                    is Result.Failure -> {
+                        errorLoginMessage.value =
+                            result.error.localizedMessage ?: "Unexpected Error"
+                        loginInProgress.value = false
+                    }
 
-                is Result.Failure -> {
-                    loginInProgress.value = false
-                }
-
-                is Result.Success -> {
-                    navigate.value = true
-                    loginInProgress.value = false
+                    is Result.Success -> {
+                        navigate.value = true
+                        loginInProgress.value = false
+                    }
                 }
             }
+
 
         }
     }

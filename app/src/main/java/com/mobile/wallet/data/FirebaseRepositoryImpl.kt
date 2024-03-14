@@ -1,4 +1,4 @@
-package com.mobile.wallet.domain
+package com.mobile.wallet.data
 
 import android.net.Uri
 import android.util.Log
@@ -6,7 +6,7 @@ import com.google.firebase.auth.FirebaseAuth
 import com.google.firebase.firestore.ktx.firestore
 import com.google.firebase.ktx.Firebase
 import com.google.firebase.storage.ktx.storage
-import com.mobile.wallet.data.User
+import com.mobile.wallet.domain.models.User
 import kotlinx.coroutines.channels.awaitClose
 import kotlinx.coroutines.flow.Flow
 import kotlinx.coroutines.flow.callbackFlow
@@ -18,16 +18,16 @@ class FirebaseRepositoryImpl : FirebaseRepository {
     private val database = Firebase.firestore
     private val storage = Firebase.storage.getReference("images")
 
-    override suspend fun login(email: String, password: String): Result<String> {
-
-        val result = auth
-            .signInWithEmailAndPassword(email, password)
-
-        if (result.isSuccessful) {
-            return Result.Success(result.result.user?.uid ?: "")
+    override suspend fun login(email: String, password: String): Flow<Result<String>> =
+        callbackFlow {
+            auth
+                .signInWithEmailAndPassword(email, password).addOnSuccessListener {
+                    trySend(Result.Success(auth.uid.toString()))
+                }.addOnFailureListener {
+                    trySend(Result.Failure(it))
+                }
+            awaitClose {}
         }
-        return Result.Failure(result.exception ?: Exception("Error"))
-    }
 
     override suspend fun createAccount(user: User): Flow<Result<String>> = callbackFlow {
 
@@ -61,6 +61,8 @@ class FirebaseRepositoryImpl : FirebaseRepository {
     }
 
     override suspend fun storeImage(uuid: String, uri: Uri): Flow<Result<String>> = callbackFlow {
+        println("storeImage:::" + uuid)
+        println("storeImage  auth.uid:::" + auth.uid)
 
         storage.child("$uuid/${UUID.randomUUID()}.jpg")
             .putFile(uri)
@@ -75,8 +77,3 @@ class FirebaseRepositoryImpl : FirebaseRepository {
     }
 }
 
-interface FirebaseRepository {
-    suspend fun login(email: String, password: String): Result<String>
-    suspend fun createAccount(user: User): Flow<Result<String>>
-    suspend fun storeImage(uuid: String, uri: Uri): Flow<Result<String>>
-}

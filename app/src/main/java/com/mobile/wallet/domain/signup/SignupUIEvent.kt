@@ -1,4 +1,4 @@
-package com.mobile.wallet.data.signup
+package com.mobile.wallet.domain.signup
 
 sealed class SignupUIEvent{
     data class NameChanged(val name:String) : SignupUIEvent()

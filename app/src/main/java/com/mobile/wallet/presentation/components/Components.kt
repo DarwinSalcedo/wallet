@@ -1,3 +1,5 @@
+@file:Suppress("IMPLICIT_CAST_TO_ANY")
+
 package com.mobile.wallet.presentation.components
 
 import android.util.Log
@@ -6,27 +8,33 @@ import androidx.compose.foundation.layout.Box
 import androidx.compose.foundation.layout.PaddingValues
 import androidx.compose.foundation.layout.Row
 import androidx.compose.foundation.layout.fillMaxWidth
+import androidx.compose.foundation.layout.height
 import androidx.compose.foundation.layout.heightIn
+import androidx.compose.foundation.layout.padding
+import androidx.compose.foundation.layout.width
+import androidx.compose.foundation.layout.wrapContentHeight
 import androidx.compose.foundation.shape.RoundedCornerShape
 import androidx.compose.foundation.text.ClickableText
 import androidx.compose.foundation.text.KeyboardActions
 import androidx.compose.foundation.text.KeyboardOptions
-import androidx.compose.material.icons.Icons
-import androidx.compose.material.icons.filled.KeyboardArrowDown
-import androidx.compose.material.icons.filled.KeyboardArrowUp
 import androidx.compose.material3.Button
 import androidx.compose.material3.ButtonDefaults
 import androidx.compose.material3.Divider
 import androidx.compose.material3.ExperimentalMaterial3Api
 import androidx.compose.material3.Icon
 import androidx.compose.material3.IconButton
+import androidx.compose.material3.MaterialTheme
 import androidx.compose.material3.OutlinedTextField
+import androidx.compose.material3.Surface
 import androidx.compose.material3.Text
 import androidx.compose.material3.TextFieldDefaults
 import androidx.compose.runtime.Composable
+import androidx.compose.runtime.LaunchedEffect
+import androidx.compose.runtime.getValue
 import androidx.compose.runtime.mutableStateOf
 import androidx.compose.runtime.remember
 import androidx.compose.runtime.saveable.rememberSaveable
+import androidx.compose.runtime.setValue
 import androidx.compose.ui.Alignment
 import androidx.compose.ui.Modifier
 import androidx.compose.ui.graphics.Brush
@@ -34,6 +42,7 @@ import androidx.compose.ui.graphics.Color
 import androidx.compose.ui.graphics.painter.Painter
 import androidx.compose.ui.platform.LocalFocusManager
 import androidx.compose.ui.res.colorResource
+import androidx.compose.ui.res.painterResource
 import androidx.compose.ui.res.stringResource
 import androidx.compose.ui.text.SpanStyle
 import androidx.compose.ui.text.TextStyle
@@ -49,7 +58,8 @@ import androidx.compose.ui.text.withStyle
 import androidx.compose.ui.unit.dp
 import androidx.compose.ui.unit.sp
 import com.mobile.wallet.R
-import com.mobile.wallet.data.login.EditTextState
+import com.mobile.wallet.domain.login.EditTextState
+import kotlinx.coroutines.delay
 
 @Composable
 fun NormalTextComponent(value: String) {
@@ -65,6 +75,27 @@ fun NormalTextComponent(value: String) {
         ), color = colorResource(id = R.color.text),
         textAlign = TextAlign.Center
     )
+}
+
+@Composable
+fun StepComponent(value: String) {
+    Box(
+        modifier = Modifier
+            .width(38.dp)
+            .height(38.dp)
+            .background(
+                brush = Brush.horizontalGradient(listOf(Color.Gray, Color.DarkGray)),
+                shape = RoundedCornerShape(50.dp)
+            ),
+        contentAlignment = Alignment.Center
+    ) {
+        Text(
+            text = value,
+            fontSize = 28.sp,
+            color = Color.White,
+            fontWeight = FontWeight.Bold
+        )
+    }
 }
 
 @Composable
@@ -95,6 +126,12 @@ fun TextFieldComponent(
         mutableStateOf("")
     }
 
+    val errorValue = rememberSaveable {
+        mutableStateOf(false)
+    }
+
+    errorValue.value = (errorStatus == EditTextState.Error)
+
     OutlinedTextField(
         modifier = Modifier
             .fillMaxWidth(),
@@ -102,7 +139,7 @@ fun TextFieldComponent(
         colors = TextFieldDefaults.outlinedTextFieldColors(
             focusedBorderColor = Color.Transparent,
             focusedLabelColor = Color.Gray,
-            cursorColor = Color.Gray
+            cursorColor = Color.Black
         ),
         keyboardOptions = KeyboardOptions(imeAction = ImeAction.Next),
         singleLine = true,
@@ -115,7 +152,7 @@ fun TextFieldComponent(
         leadingIcon = {
             Icon(painter = painterResource, contentDescription = "")
         },
-        isError = (errorStatus == EditTextState.Error)
+        isError = errorValue.value
     )
 }
 
@@ -129,11 +166,12 @@ fun PasswordTextFieldComponent(
 ) {
 
     val localFocusManager = LocalFocusManager.current
-    val password = remember {
+
+    val password = rememberSaveable {
         mutableStateOf("")
     }
 
-    val passwordVisible = remember {
+    val passwordVisible = rememberSaveable {
         mutableStateOf(false)
     }
 
@@ -166,19 +204,21 @@ fun PasswordTextFieldComponent(
         trailingIcon = {
 
             val iconImage = if (passwordVisible.value) {
-                Icons.Filled.KeyboardArrowDown
+                Icon(
+                    painterResource(id = R.drawable.baseline_face_24),
+                    stringResource(id = R.string.hide)
+                )
             } else {
-                Icons.Filled.KeyboardArrowUp
+                Icon(
+                    painterResource(id = R.drawable.baseline_face_retouching_off_24),
+                    stringResource(id = R.string.show)
+                )
             }
 
-            val description = if (passwordVisible.value) {
-                stringResource(id = R.string.hide)
-            } else {
-                stringResource(id = R.string.show)
-            }
+
 
             IconButton(onClick = { passwordVisible.value = !passwordVisible.value }) {
-                Icon(imageVector = iconImage, contentDescription = description)
+                iconImage
             }
 
         },
@@ -189,15 +229,17 @@ fun PasswordTextFieldComponent(
 
 @Composable
 fun ButtonComponent(value: String, onButtonClicked: () -> Unit, isEnabled: Boolean = false) {
+    val localFocusManager = LocalFocusManager.current
     Button(
         modifier = Modifier
             .fillMaxWidth()
             .heightIn(48.dp),
         onClick = {
             onButtonClicked.invoke()
+            localFocusManager.clearFocus(true)
         },
         contentPadding = PaddingValues(),
-        colors = ButtonDefaults.buttonColors(Color.Transparent),
+        colors = ButtonDefaults.buttonColors(Color.Black),
         shape = RoundedCornerShape(50.dp),
         enabled = isEnabled
     ) {
@@ -205,10 +247,7 @@ fun ButtonComponent(value: String, onButtonClicked: () -> Unit, isEnabled: Boole
             modifier = Modifier
                 .fillMaxWidth()
                 .heightIn(48.dp)
-                .background(
-                    brush = Brush.horizontalGradient(listOf(Color.Gray, Color.DarkGray)),
-                    shape = RoundedCornerShape(50.dp)
-                ),
+               ,
             contentAlignment = Alignment.Center
         ) {
             Text(
@@ -287,6 +326,36 @@ fun ClickableLoginTextComponent(tryingToLogin: Boolean = true, onTextSelected: (
 
         },
     )
+}
+
+@Composable
+fun DisappearingMessage(
+    message: String,
+    duration: Int = 25000,
+) {
+    var visible by remember { mutableStateOf(true) }
+
+    LaunchedEffect(Unit) {
+        delay(duration.toLong())
+        visible = false
+    }
+
+    if (visible) {
+        Surface(
+            modifier = Modifier
+                .fillMaxWidth()
+                .wrapContentHeight()
+                .padding(vertical = 16.dp),
+            color = Color.Transparent,
+            contentColor = Color.Black
+        ) {
+            Text(
+                text = message,
+                modifier = Modifier.padding(horizontal = 14.dp),
+                style = MaterialTheme.typography.headlineSmall
+            )
+        }
+    }
 }
 
 

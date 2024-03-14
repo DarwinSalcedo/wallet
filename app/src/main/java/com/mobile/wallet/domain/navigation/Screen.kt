@@ -1,4 +1,4 @@
-package com.mobile.wallet.data.navigation
+package com.mobile.wallet.domain.navigation
 
 sealed class Screen(val id : String) {
     object SignUp : Screen("signup")

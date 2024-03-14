@@ -1,4 +1,4 @@
-package com.mobile.wallet.data
+package com.mobile.wallet.domain.models
 
 data class User(
     val name: String = "",

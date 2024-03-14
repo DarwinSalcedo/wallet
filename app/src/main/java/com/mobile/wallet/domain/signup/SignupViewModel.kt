@@ -1,14 +1,15 @@
-package com.mobile.wallet.data.signup
+package com.mobile.wallet.domain.signup
 
 import android.util.Log
 import androidx.compose.runtime.mutableStateOf
 import androidx.lifecycle.ViewModel
 import androidx.lifecycle.viewModelScope
-import com.mobile.wallet.data.User
-import com.mobile.wallet.data.rules.Validator
-import com.mobile.wallet.domain.FirebaseRepository
-import com.mobile.wallet.domain.FirebaseRepositoryImpl
-import com.mobile.wallet.domain.Result
+import com.mobile.wallet.data.FirebaseRepository
+import com.mobile.wallet.data.FirebaseRepositoryImpl
+import com.mobile.wallet.data.Result
+import com.mobile.wallet.domain.login.EditTextState
+import com.mobile.wallet.domain.models.User
+import com.mobile.wallet.domain.rules.Validator
 import kotlinx.coroutines.launch
 
 
@@ -38,7 +39,7 @@ class SignupViewModel : ViewModel() {
 
             is SignupUIEvent.SurnameChanged -> {
                 registrationUIState.value = registrationUIState.value.copy(
-                    lastName = event.surname
+                    surname = event.surname
                 )
             }
 
@@ -67,7 +68,7 @@ class SignupViewModel : ViewModel() {
     private fun signUp() {
         val user = User(
             name = registrationUIState.value.name,
-            lastName = registrationUIState.value.lastName,
+            lastName = registrationUIState.value.surname,
             email = registrationUIState.value.email,
             password = registrationUIState.value.password,
         )
@@ -77,12 +78,12 @@ class SignupViewModel : ViewModel() {
     }
 
     private fun validateDataWithRules() {
-        val fNameResult = Validator.validateFirstName(
-            fName = registrationUIState.value.name
+        val nameResult = Validator.validateName(
+            value = registrationUIState.value.name
         )
 
-        val lNameResult = Validator.validateLastName(
-            lName = registrationUIState.value.lastName
+        val surnameResult = Validator.validateName(
+            value = registrationUIState.value.surname
         )
 
         val emailResult = Validator.validateEmail(
@@ -95,14 +96,14 @@ class SignupViewModel : ViewModel() {
         )
 
         registrationUIState.value = registrationUIState.value.copy(
-            nameError = fNameResult.status,
-            lastNameError = lNameResult.status,
-            emailError = emailResult.status,
-            passwordError = passwordResult.status
+            nameError = if (nameResult.status) EditTextState.Success else EditTextState.Error,
+            lastNameError = if (surnameResult.status) EditTextState.Success else EditTextState.Error,
+            emailError = if (emailResult.status) EditTextState.Success else EditTextState.Error,
+            passwordError = if (passwordResult.status) EditTextState.Success else EditTextState.Error
         )
 
 
-        allValidationsPassed.value = fNameResult.status && lNameResult.status &&
+        allValidationsPassed.value = nameResult.status && surnameResult.status &&
                 emailResult.status && passwordResult.status
 
     }
@@ -120,7 +121,7 @@ class SignupViewModel : ViewModel() {
                     }
 
                     is Result.Success -> {
-                        Log.d(TAG, "success ::"+result.data)
+                        Log.d(TAG, "success ::" + result.data)
                         uuid.value = result.data
                         progress.value = true
                         navigate.value = true

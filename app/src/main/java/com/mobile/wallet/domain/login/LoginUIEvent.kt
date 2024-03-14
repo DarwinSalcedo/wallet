@@ -1,4 +1,4 @@
-package com.mobile.wallet.data.login
+package com.mobile.wallet.domain.login
 
 sealed class LoginUIEvent{
 

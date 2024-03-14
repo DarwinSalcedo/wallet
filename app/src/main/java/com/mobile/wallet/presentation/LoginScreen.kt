@@ -10,6 +10,8 @@ import androidx.compose.foundation.layout.padding
 import androidx.compose.material3.CircularProgressIndicator
 import androidx.compose.material3.Surface
 import androidx.compose.runtime.Composable
+import androidx.compose.runtime.collectAsState
+import androidx.compose.runtime.getValue
 import androidx.compose.ui.Alignment
 import androidx.compose.ui.Modifier
 import androidx.compose.ui.graphics.Color
@@ -19,19 +21,21 @@ import androidx.compose.ui.unit.dp
 import androidx.lifecycle.viewmodel.compose.viewModel
 import androidx.navigation.NavHostController
 import com.mobile.wallet.R
-import com.mobile.wallet.data.login.LoginUIEvent
-import com.mobile.wallet.data.login.LoginViewModel
-import com.mobile.wallet.data.navigation.Screen
+import com.mobile.wallet.domain.login.LoginUIEvent
+import com.mobile.wallet.domain.login.LoginViewModel
+import com.mobile.wallet.domain.navigation.Screen
 import com.mobile.wallet.presentation.components.ButtonComponent
 import com.mobile.wallet.presentation.components.ClickableLoginTextComponent
+import com.mobile.wallet.presentation.components.DisappearingMessage
 import com.mobile.wallet.presentation.components.DividerTextComponent
 import com.mobile.wallet.presentation.components.HeadingTextComponent
-import com.mobile.wallet.presentation.components.TextFieldComponent
-import com.mobile.wallet.presentation.components.NormalTextComponent
 import com.mobile.wallet.presentation.components.PasswordTextFieldComponent
+import com.mobile.wallet.presentation.components.TextFieldComponent
 
 @Composable
 fun LoginScreen(navController: NavHostController, loginViewModel: LoginViewModel = viewModel()) {
+
+    val errorMessage by loginViewModel.errorLoginMessage.collectAsState(initial = "")
 
     Box(
         modifier = Modifier.fillMaxSize(), contentAlignment = Alignment.Center
@@ -70,7 +74,13 @@ fun LoginScreen(navController: NavHostController, loginViewModel: LoginViewModel
                 )
 
 
-                Spacer(modifier = Modifier.height(40.dp))
+                Spacer(modifier = Modifier.height(10.dp))
+
+                if (errorMessage.isNotEmpty()) {
+                    DisappearingMessage(errorMessage)
+                }
+
+                Spacer(modifier = Modifier.height(20.dp))
 
                 ButtonComponent(
                     value = stringResource(id = R.string.login), onButtonClicked = {
@@ -85,16 +95,19 @@ fun LoginScreen(navController: NavHostController, loginViewModel: LoginViewModel
                 ClickableLoginTextComponent(tryingToLogin = false, onTextSelected = {
                     navController.navigate(Screen.SignUp.id)
                 })
+
+
+            }
+
+
+
+            if (loginViewModel.navigate.value) {
+                navController.navigate(Screen.Home.id)
             }
         }
 
         if (loginViewModel.loginInProgress.value) {
             CircularProgressIndicator()
         }
-        if (loginViewModel.navigate.value) {
-            navController.navigate(Screen.Home.id)
-        }
     }
-
-
 }
