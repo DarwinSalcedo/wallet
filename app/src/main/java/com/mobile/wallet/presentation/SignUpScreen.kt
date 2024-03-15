@@ -19,12 +19,12 @@ import androidx.compose.ui.unit.dp
 import androidx.lifecycle.viewmodel.compose.viewModel
 import androidx.navigation.NavHostController
 import com.mobile.wallet.R
-import com.mobile.wallet.domain.login.EditTextState
 import com.mobile.wallet.domain.navigation.Screen
 import com.mobile.wallet.domain.signup.SignupUIEvent
 import com.mobile.wallet.domain.signup.SignupViewModel
 import com.mobile.wallet.presentation.components.ButtonComponent
 import com.mobile.wallet.presentation.components.ClickableLoginTextComponent
+import com.mobile.wallet.presentation.components.DisappearingMessage
 import com.mobile.wallet.presentation.components.DividerTextComponent
 import com.mobile.wallet.presentation.components.HeadingTextComponent
 import com.mobile.wallet.presentation.components.NormalTextComponent
@@ -34,6 +34,7 @@ import com.mobile.wallet.presentation.components.TextFieldComponent
 
 @Composable
 fun SignUpScreen(navController: NavHostController, signupViewModel: SignupViewModel = viewModel()) {
+
     Box(
         modifier = Modifier.fillMaxSize(), contentAlignment = Alignment.Center
     ) {
@@ -89,7 +90,12 @@ fun SignUpScreen(navController: NavHostController, signupViewModel: SignupViewMo
                     errorStatus = signupViewModel.registrationUIState.value.passwordError
                 )
 
-                Spacer(modifier = Modifier.height(40.dp))
+                Spacer(modifier = Modifier.height(10.dp))
+
+                if (signupViewModel.errorMessage.value.isNotEmpty())
+                    DisappearingMessage(signupViewModel.errorMessage.value)
+
+                Spacer(modifier = Modifier.height(20.dp))
 
                 ButtonComponent(
                     value = stringResource(id = R.string.photo_step), onButtonClicked = {

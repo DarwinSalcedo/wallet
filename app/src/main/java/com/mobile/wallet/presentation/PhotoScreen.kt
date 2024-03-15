@@ -91,7 +91,7 @@ fun PhotoScreen(navController: NavHostController, photoViewModel: PhotoViewModel
         ) {
 
 
-            Column(modifier = Modifier.fillMaxSize()) {
+            Column(modifier = Modifier.fillMaxSize(), verticalArrangement = Arrangement.Center) {
 
 
                 StepComponent(value = "2")

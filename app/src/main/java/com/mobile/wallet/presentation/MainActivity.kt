@@ -9,14 +9,19 @@ import androidx.compose.material3.Surface
 import androidx.compose.runtime.Composable
 import androidx.compose.ui.Modifier
 import androidx.compose.ui.graphics.Color
+import androidx.lifecycle.ViewModelStore
+import androidx.lifecycle.viewmodel.compose.viewModel
 import androidx.navigation.NavHostController
 import androidx.navigation.compose.NavHost
 import androidx.navigation.compose.composable
 import androidx.navigation.compose.rememberNavController
+import com.mobile.wallet.data.FirebaseRepositoryImpl
+import com.mobile.wallet.domain.MainViewModel
 import com.mobile.wallet.domain.navigation.Screen
 import com.mobile.wallet.ui.theme.WalletappTheme
 
 class MainActivity : ComponentActivity() {
+
     override fun onCreate(savedInstanceState: Bundle?) {
         super.onCreate(savedInstanceState)
         setContent {
@@ -34,17 +39,20 @@ class MainActivity : ComponentActivity() {
 }
 
 @Composable
-fun MainNavigation(navController: NavHostController = rememberNavController()) {
+fun MainNavigation(
+    navController: NavHostController = rememberNavController(),
+    view: MainViewModel = viewModel()
+) {
 
     NavHost(
         navController = navController,
-        startDestination = Screen.Login.id,
+        startDestination = if (view.inSession) Screen.Home.id else Screen.Login.id,
     ) {
         composable(Screen.Login.id) { LoginScreen(navController) }
         composable(Screen.SignUp.id) { SignUpScreen(navController) }
         composable(Screen.Photo.id) { PhotoScreen(navController) }
         composable(Screen.Success.id) { SuccessScreen(navController) }
-        composable(Screen.Home.id) { HomeScreen() }
+        composable(Screen.Home.id) { HomeScreen(navController) }
     }
 }
 

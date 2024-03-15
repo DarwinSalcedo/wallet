@@ -10,8 +10,6 @@ import androidx.compose.foundation.layout.padding
 import androidx.compose.material3.CircularProgressIndicator
 import androidx.compose.material3.Surface
 import androidx.compose.runtime.Composable
-import androidx.compose.runtime.collectAsState
-import androidx.compose.runtime.getValue
 import androidx.compose.ui.Alignment
 import androidx.compose.ui.Modifier
 import androidx.compose.ui.graphics.Color
@@ -35,7 +33,6 @@ import com.mobile.wallet.presentation.components.TextFieldComponent
 @Composable
 fun LoginScreen(navController: NavHostController, loginViewModel: LoginViewModel = viewModel()) {
 
-    val errorMessage by loginViewModel.errorLoginMessage.collectAsState(initial = "")
 
     Box(
         modifier = Modifier.fillMaxSize(), contentAlignment = Alignment.Center
@@ -75,10 +72,10 @@ fun LoginScreen(navController: NavHostController, loginViewModel: LoginViewModel
 
 
                 Spacer(modifier = Modifier.height(10.dp))
+                if(loginViewModel.errorMessage.value.isNotEmpty())
+                    DisappearingMessage(loginViewModel.errorMessage.value)
 
-                if (errorMessage.isNotEmpty()) {
-                    DisappearingMessage(errorMessage)
-                }
+
 
                 Spacer(modifier = Modifier.height(20.dp))
 

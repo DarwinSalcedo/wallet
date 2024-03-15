@@ -1,7 +1,7 @@
 package com.mobile.wallet.domain.signup
 
-import android.util.Log
 import androidx.compose.runtime.mutableStateOf
+import androidx.compose.runtime.neverEqualPolicy
 import androidx.lifecycle.ViewModel
 import androidx.lifecycle.viewModelScope
 import com.mobile.wallet.data.FirebaseRepository
@@ -10,6 +10,7 @@ import com.mobile.wallet.data.Result
 import com.mobile.wallet.domain.login.EditTextState
 import com.mobile.wallet.domain.models.User
 import com.mobile.wallet.domain.rules.Validator
+import kotlinx.coroutines.Job
 import kotlinx.coroutines.launch
 
 
@@ -25,9 +26,11 @@ class SignupViewModel : ViewModel() {
 
     var navigate = mutableStateOf(false)
 
-    var uuid = mutableStateOf("")
+    var errorMessage = mutableStateOf("", neverEqualPolicy())
 
     private var repository: FirebaseRepository = FirebaseRepositoryImpl()
+
+    private var job: Job? = null
 
     fun onEvent(event: SignupUIEvent) {
         when (event) {
@@ -110,19 +113,20 @@ class SignupViewModel : ViewModel() {
 
 
     private fun createUserInFirebase(user: User) {
-        viewModelScope.launch {
+        job?.cancel()
+        job =   viewModelScope.launch {
+            progress.value = true
 
             repository.createAccount(user).collect {
 
                 when (val result = it) {
                     is Result.Failure -> {
-                        Log.d(TAG, "Error ::${result.error}")
-                        progress.value = true
+                        errorMessage.value = result.error.localizedMessage.toString()
+                        progress.value = false
                     }
 
                     is Result.Success -> {
-                        Log.d(TAG, "success ::" + result.data)
-                        uuid.value = result.data
+                        errorMessage.value = ""
                         progress.value = true
                         navigate.value = true
                     }

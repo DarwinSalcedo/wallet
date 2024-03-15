@@ -5,8 +5,10 @@ package com.mobile.wallet.presentation.components
 import android.util.Log
 import androidx.compose.foundation.background
 import androidx.compose.foundation.layout.Box
+import androidx.compose.foundation.layout.Column
 import androidx.compose.foundation.layout.PaddingValues
 import androidx.compose.foundation.layout.Row
+import androidx.compose.foundation.layout.Spacer
 import androidx.compose.foundation.layout.fillMaxWidth
 import androidx.compose.foundation.layout.height
 import androidx.compose.foundation.layout.heightIn
@@ -17,8 +19,17 @@ import androidx.compose.foundation.shape.RoundedCornerShape
 import androidx.compose.foundation.text.ClickableText
 import androidx.compose.foundation.text.KeyboardActions
 import androidx.compose.foundation.text.KeyboardOptions
+import androidx.compose.material.icons.Icons
+import androidx.compose.material.icons.filled.AddCircle
+import androidx.compose.material.icons.filled.Delete
+import androidx.compose.material.icons.filled.Details
+import androidx.compose.material.icons.filled.Lightbulb
+import androidx.compose.material.icons.filled.Paid
+import androidx.compose.material3.AlertDialog
 import androidx.compose.material3.Button
 import androidx.compose.material3.ButtonDefaults
+import androidx.compose.material3.Card
+import androidx.compose.material3.CardDefaults
 import androidx.compose.material3.Divider
 import androidx.compose.material3.ExperimentalMaterial3Api
 import androidx.compose.material3.Icon
@@ -29,12 +40,8 @@ import androidx.compose.material3.Surface
 import androidx.compose.material3.Text
 import androidx.compose.material3.TextFieldDefaults
 import androidx.compose.runtime.Composable
-import androidx.compose.runtime.LaunchedEffect
-import androidx.compose.runtime.getValue
 import androidx.compose.runtime.mutableStateOf
-import androidx.compose.runtime.remember
 import androidx.compose.runtime.saveable.rememberSaveable
-import androidx.compose.runtime.setValue
 import androidx.compose.ui.Alignment
 import androidx.compose.ui.Modifier
 import androidx.compose.ui.graphics.Brush
@@ -59,7 +66,9 @@ import androidx.compose.ui.unit.dp
 import androidx.compose.ui.unit.sp
 import com.mobile.wallet.R
 import com.mobile.wallet.domain.login.EditTextState
-import kotlinx.coroutines.delay
+import com.mobile.wallet.utils.categories
+import com.mobile.wallet.utils.toCurrency
+import java.math.BigDecimal
 
 @Composable
 fun NormalTextComponent(value: String) {
@@ -246,8 +255,7 @@ fun ButtonComponent(value: String, onButtonClicked: () -> Unit, isEnabled: Boole
         Box(
             modifier = Modifier
                 .fillMaxWidth()
-                .heightIn(48.dp)
-               ,
+                .heightIn(48.dp),
             contentAlignment = Alignment.Center
         ) {
             Text(
@@ -331,32 +339,128 @@ fun ClickableLoginTextComponent(tryingToLogin: Boolean = true, onTextSelected: (
 @Composable
 fun DisappearingMessage(
     message: String,
-    duration: Int = 25000,
 ) {
-    var visible by remember { mutableStateOf(true) }
 
-    LaunchedEffect(Unit) {
-        delay(duration.toLong())
-        visible = false
-    }
+    Surface(
+        modifier = Modifier
+            .fillMaxWidth()
+            .wrapContentHeight(),
+        color = Color.LightGray,
+        contentColor = Color.Black
+    ) {
 
-    if (visible) {
-        Surface(
+        Column(
             modifier = Modifier
                 .fillMaxWidth()
                 .wrapContentHeight()
-                .padding(vertical = 16.dp),
-            color = Color.Transparent,
-            contentColor = Color.Black
+                .padding(vertical = 16.dp)
+
         ) {
             Text(
                 text = message,
                 modifier = Modifier.padding(horizontal = 14.dp),
-                style = MaterialTheme.typography.headlineSmall
+                style = MaterialTheme.typography.labelMedium
             )
         }
     }
+
+
 }
+
+@Composable
+fun BalanceCard(
+    value: String,
+) {
+    Card(
+        modifier = Modifier
+            .fillMaxWidth()
+            .padding(16.dp),
+        elevation = CardDefaults.cardElevation(3.dp),
+        colors = CardDefaults.cardColors(
+            contentColor = MaterialTheme.colorScheme.onSurface
+        )
+    ) {
+        Column(Modifier.padding(16.dp)) {
+            Text(
+                text = "Balance",
+            )
+            Row(
+                verticalAlignment = Alignment.CenterVertically
+            )
+            {
+                Icon(
+                    imageVector = Icons.Filled.Paid,
+                    contentDescription = "",
+                )
+
+                Spacer(modifier = Modifier.width(16.dp))
+                Text(
+                    text = value,
+                    style = MaterialTheme.typography.headlineLarge,
+                    modifier = Modifier.padding(start = 16.dp, end = 16.dp)
+                )
+            }
+        }
+    }
+}
+
+@Composable
+fun TransactionCard(
+    uuid: String,
+    value: Double,
+    category: String,
+    date: String,
+
+) {
+    Card(
+        modifier = Modifier.fillMaxWidth(),
+        elevation = CardDefaults.cardElevation(3.dp),
+        colors = CardDefaults.cardColors(
+            containerColor = Color.White,
+            contentColor = MaterialTheme.colorScheme.onSurface
+        )
+    ) {
+        TransactionInfoRow(category, date, value)
+    }
+}
+
+@Composable
+fun TransactionInfoRow(category: String, date: String, value: Double) {
+    Column(Modifier.padding(16.dp)) {
+        Row(
+            verticalAlignment = Alignment.CenterVertically
+        )
+        {
+            Icon(
+                imageVector = categories.firstOrNull { it.first == category }?.second
+                    ?: Icons.Filled.Lightbulb,
+                contentDescription = "",
+            )
+
+            Spacer(modifier = Modifier.width(16.dp))
+
+            Column(
+                modifier = Modifier.weight(1f)
+            ) {
+                Text(text = category, style = MaterialTheme.typography.titleMedium)
+                Text(
+                    text = date,
+                    style = MaterialTheme.typography.bodySmall,
+                    color = MaterialTheme.colorScheme.onSurface.copy(alpha = 0.5f)
+                )
+            }
+            Text(
+                text = value.toCurrency(),
+                style = MaterialTheme.typography.bodyLarge,
+            )
+
+            Spacer(modifier = Modifier.width(16.dp))
+
+            Icon(imageVector = Icons.Filled.AddCircle, contentDescription = "")
+        }
+    }
+}
+
 
 
 

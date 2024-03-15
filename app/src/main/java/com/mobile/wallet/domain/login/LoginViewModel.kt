@@ -1,13 +1,13 @@
 package com.mobile.wallet.domain.login
 
 import androidx.compose.runtime.mutableStateOf
+import androidx.compose.runtime.neverEqualPolicy
 import androidx.lifecycle.ViewModel
 import androidx.lifecycle.viewModelScope
 import com.mobile.wallet.data.FirebaseRepository
 import com.mobile.wallet.data.FirebaseRepositoryImpl
 import com.mobile.wallet.data.Result
 import com.mobile.wallet.domain.rules.Validator
-import kotlinx.coroutines.flow.MutableStateFlow
 import kotlinx.coroutines.launch
 
 class LoginViewModel : ViewModel() {
@@ -18,7 +18,7 @@ class LoginViewModel : ViewModel() {
 
     var allValidationsPassed = mutableStateOf(false)
 
-    var errorLoginMessage = MutableStateFlow("")
+    var errorMessage = mutableStateOf("", neverEqualPolicy())
 
     var loginInProgress = mutableStateOf(false)
 
@@ -79,12 +79,13 @@ class LoginViewModel : ViewModel() {
                 when (val result = it) {
 
                     is Result.Failure -> {
-                        errorLoginMessage.value =
+                        errorMessage.value =
                             result.error.localizedMessage ?: "Unexpected Error"
                         loginInProgress.value = false
                     }
 
                     is Result.Success -> {
+                        errorMessage.value = ""
                         navigate.value = true
                         loginInProgress.value = false
                     }

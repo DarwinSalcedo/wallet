@@ -17,6 +17,18 @@ class FirebaseRepositoryImpl : FirebaseRepository {
     private val auth = FirebaseAuth.getInstance()
     private val database = Firebase.firestore
     private val storage = Firebase.storage.getReference("images")
+    override fun getUser(): String? {
+        return auth.currentUser?.email
+    }
+
+    override fun inSession(): Boolean {
+        val result = (!auth.uid.isNullOrEmpty())
+        return result
+    }
+
+    override fun logout() {
+        auth.signOut()
+    }
 
     override suspend fun login(email: String, password: String): Flow<Result<String>> =
         callbackFlow {
@@ -61,8 +73,6 @@ class FirebaseRepositoryImpl : FirebaseRepository {
     }
 
     override suspend fun storeImage(uuid: String, uri: Uri): Flow<Result<String>> = callbackFlow {
-        println("storeImage:::" + uuid)
-        println("storeImage  auth.uid:::" + auth.uid)
 
         storage.child("$uuid/${UUID.randomUUID()}.jpg")
             .putFile(uri)
