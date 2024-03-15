@@ -99,12 +99,6 @@ fun PhotoScreen(navController: NavHostController, photoViewModel: PhotoViewModel
                 HeadingTextComponent(value = stringResource(id = R.string.register))
                 Spacer(modifier = Modifier.height(20.dp))
 
-
-
-
-
-
-
                 Column(
                     Modifier
                         .fillMaxSize()

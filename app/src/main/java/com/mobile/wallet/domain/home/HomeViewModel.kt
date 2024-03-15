@@ -2,10 +2,10 @@ package com.mobile.wallet.domain.home
 
 import androidx.lifecycle.ViewModel
 import androidx.lifecycle.viewModelScope
-import com.mobile.wallet.data.FirebaseRepository
-import com.mobile.wallet.data.FirebaseRepositoryImpl
-import com.mobile.wallet.data.Result
-import com.mobile.wallet.data.TransactionRepositoryImpl
+import com.mobile.wallet.data.repository.auth.FirebaseRepository
+import com.mobile.wallet.data.repository.auth.FirebaseRepositoryImpl
+import com.mobile.wallet.data.core.Result
+import com.mobile.wallet.data.repository.transaction.TransactionRepositoryImpl
 import com.mobile.wallet.domain.models.Transaction
 import kotlinx.coroutines.delay
 import kotlinx.coroutines.flow.MutableStateFlow

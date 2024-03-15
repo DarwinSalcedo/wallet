@@ -1,9 +1,10 @@
-package com.mobile.wallet.data
+package com.mobile.wallet.data.repository.transaction
 
 import android.util.Log
 import com.google.firebase.auth.FirebaseAuth
 import com.google.firebase.firestore.ktx.firestore
 import com.google.firebase.ktx.Firebase
+import com.mobile.wallet.data.core.Result
 import com.mobile.wallet.data.dto.TransactionDto
 import com.mobile.wallet.domain.models.Transaction
 import kotlinx.coroutines.channels.awaitClose

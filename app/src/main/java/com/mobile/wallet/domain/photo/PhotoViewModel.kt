@@ -4,9 +4,9 @@ import android.net.Uri
 import androidx.compose.runtime.mutableStateOf
 import androidx.lifecycle.ViewModel
 import androidx.lifecycle.viewModelScope
-import com.mobile.wallet.data.FirebaseRepository
-import com.mobile.wallet.data.FirebaseRepositoryImpl
-import com.mobile.wallet.data.Result
+import com.mobile.wallet.data.repository.auth.FirebaseRepository
+import com.mobile.wallet.data.repository.auth.FirebaseRepositoryImpl
+import com.mobile.wallet.data.core.Result
 import kotlinx.coroutines.Job
 import kotlinx.coroutines.delay
 import kotlinx.coroutines.launch

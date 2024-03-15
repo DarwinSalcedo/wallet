@@ -21,11 +21,8 @@ import androidx.compose.foundation.text.KeyboardActions
 import androidx.compose.foundation.text.KeyboardOptions
 import androidx.compose.material.icons.Icons
 import androidx.compose.material.icons.filled.AddCircle
-import androidx.compose.material.icons.filled.Delete
-import androidx.compose.material.icons.filled.Details
 import androidx.compose.material.icons.filled.Lightbulb
 import androidx.compose.material.icons.filled.Paid
-import androidx.compose.material3.AlertDialog
 import androidx.compose.material3.Button
 import androidx.compose.material3.ButtonDefaults
 import androidx.compose.material3.Card
@@ -68,7 +65,6 @@ import com.mobile.wallet.R
 import com.mobile.wallet.domain.login.EditTextState
 import com.mobile.wallet.utils.categories
 import com.mobile.wallet.utils.toCurrency
-import java.math.BigDecimal
 
 @Composable
 fun NormalTextComponent(value: String) {
@@ -411,7 +407,7 @@ fun TransactionCard(
     category: String,
     date: String,
 
-) {
+    ) {
     Card(
         modifier = Modifier.fillMaxWidth(),
         elevation = CardDefaults.cardElevation(3.dp),

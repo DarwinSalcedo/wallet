@@ -1,6 +1,7 @@
-package com.mobile.wallet.data
+package com.mobile.wallet.data.repository.auth
 
 import android.net.Uri
+import com.mobile.wallet.data.core.Result
 import com.mobile.wallet.domain.models.User
 import kotlinx.coroutines.flow.Flow
 

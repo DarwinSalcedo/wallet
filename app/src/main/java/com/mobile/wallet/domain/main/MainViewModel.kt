@@ -1,8 +1,8 @@
-package com.mobile.wallet.domain
+package com.mobile.wallet.domain.main
 
 import androidx.lifecycle.ViewModel
-import com.mobile.wallet.data.FirebaseRepository
-import com.mobile.wallet.data.FirebaseRepositoryImpl
+import com.mobile.wallet.data.repository.auth.FirebaseRepository
+import com.mobile.wallet.data.repository.auth.FirebaseRepositoryImpl
 
 class MainViewModel : ViewModel() {
 

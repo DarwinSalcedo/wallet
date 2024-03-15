@@ -4,9 +4,9 @@ import androidx.compose.runtime.mutableStateOf
 import androidx.compose.runtime.neverEqualPolicy
 import androidx.lifecycle.ViewModel
 import androidx.lifecycle.viewModelScope
-import com.mobile.wallet.data.FirebaseRepository
-import com.mobile.wallet.data.FirebaseRepositoryImpl
-import com.mobile.wallet.data.Result
+import com.mobile.wallet.data.repository.auth.FirebaseRepository
+import com.mobile.wallet.data.repository.auth.FirebaseRepositoryImpl
+import com.mobile.wallet.data.core.Result
 import com.mobile.wallet.domain.login.EditTextState
 import com.mobile.wallet.domain.models.User
 import com.mobile.wallet.domain.rules.Validator

@@ -1,4 +1,4 @@
-package com.mobile.wallet.data
+package com.mobile.wallet.data.repository.auth
 
 import android.net.Uri
 import android.util.Log
@@ -6,10 +6,12 @@ import com.google.firebase.auth.FirebaseAuth
 import com.google.firebase.firestore.ktx.firestore
 import com.google.firebase.ktx.Firebase
 import com.google.firebase.storage.ktx.storage
+import com.mobile.wallet.data.core.Result
 import com.mobile.wallet.domain.models.User
 import kotlinx.coroutines.channels.awaitClose
 import kotlinx.coroutines.flow.Flow
 import kotlinx.coroutines.flow.callbackFlow
+import java.lang.Exception
 import java.util.UUID
 
 class FirebaseRepositoryImpl : FirebaseRepository {
@@ -48,7 +50,7 @@ class FirebaseRepositoryImpl : FirebaseRepository {
 
                 FirebaseAuth.getInstance().uid.let { uuid ->
                     if (uuid.isNullOrEmpty()) {
-                        trySend(Result.Failure(java.lang.Exception("Not found uuid")))
+                        trySend(Result.Failure(Exception("Not found uuid")))
                     } else {
                         database.collection("users").document(uuid).set(user)
                             .addOnSuccessListener {
@@ -74,7 +76,7 @@ class FirebaseRepositoryImpl : FirebaseRepository {
 
     override suspend fun storeImage(uuid: String, uri: Uri): Flow<Result<String>> = callbackFlow {
 
-        storage.child("$uuid/${UUID.randomUUID()}.jpg")
+        storage.child("${auth.uid}/${UUID.randomUUID()}.jpg")
             .putFile(uri)
             .addOnSuccessListener {
                 trySend(Result.Success(it.metadata?.path ?: ""))

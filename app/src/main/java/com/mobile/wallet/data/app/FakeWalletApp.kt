@@ -1,4 +1,4 @@
-package com.mobile.wallet.data
+package com.mobile.wallet.data.app
 
 import android.app.Application
 import com.google.firebase.FirebaseApp
