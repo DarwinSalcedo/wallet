@@ -73,7 +73,7 @@ fun LoginScreen(navController: NavHostController, loginViewModel: LoginViewModel
 
                 Spacer(modifier = Modifier.height(10.dp))
                 if(loginViewModel.errorMessage.value.isNotEmpty())
-                    DisappearingMessage(loginViewModel.errorMessage.value)
+                    DisappearingMessage(loginViewModel.errorMessage.value){loginViewModel.errorMessage.value = ""}
 
 
 

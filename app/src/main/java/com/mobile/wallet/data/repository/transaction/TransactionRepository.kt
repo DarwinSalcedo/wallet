@@ -6,7 +6,7 @@ import kotlinx.coroutines.flow.Flow
 
 interface TransactionRepository {
 
-    fun add(transaction: Transaction)
+    fun add(transaction: Transaction) : Flow<Result<String>>
     fun fetch(): Flow<Result<String>>
 
 }

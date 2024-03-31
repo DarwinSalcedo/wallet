@@ -18,26 +18,28 @@ class TransactionRepositoryImpl : TransactionRepository {
     private val localTransactions = mutableListOf<Transaction>()
     val transactions get() = localTransactions.toList()
 
-    override fun add(transaction: Transaction) {
+    override fun add(transaction: Transaction)  =  callbackFlow{
 
         localTransactions.add(transaction)
         localTransactions.sortByDescending { it.date }
 
         auth.uid.let { uuid ->
             if (uuid.isNullOrEmpty()) {
+                trySend(Result.Failure(java.lang.Exception("Not found uuid")))
             } else {
                 database.collection("transactions").add(transaction.toTransactionDto(uuid))
                     .addOnSuccessListener { documents ->
 
                         Log.d("TAG", "DocumentSnapshot data: ${documents}")
-
+                        trySend(Result.Success("OK"))
                     }
                     .addOnFailureListener {
                         Log.d("TAG", "Exception= ${it.localizedMessage}")
+                        trySend(Result.Failure(it))
                     }
             }
         }
-
+        awaitClose {}
     }
 
     override fun fetch(): Flow<Result<String>> = callbackFlow {

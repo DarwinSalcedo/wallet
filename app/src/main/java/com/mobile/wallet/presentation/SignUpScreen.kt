@@ -93,7 +93,9 @@ fun SignUpScreen(navController: NavHostController, signupViewModel: SignupViewMo
                 Spacer(modifier = Modifier.height(10.dp))
 
                 if (signupViewModel.errorMessage.value.isNotEmpty())
-                    DisappearingMessage(signupViewModel.errorMessage.value)
+                    DisappearingMessage(signupViewModel.errorMessage.value) {
+                        signupViewModel.errorMessage.value = ""
+                    }
 
                 Spacer(modifier = Modifier.height(20.dp))
 

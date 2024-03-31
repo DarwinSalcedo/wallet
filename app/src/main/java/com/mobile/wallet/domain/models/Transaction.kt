@@ -9,8 +9,15 @@ class Transaction(
     val category: String = "",
     val value: Double = 0.0,
     val date: Date = Date()
-){
-    fun toTransactionDto(userId: String) : TransactionDto {
+) {
+    fun toTransactionDto(userId: String): TransactionDto {
         return TransactionDto(userId, uuid, category, value, date)
+    }
+
+    override fun toString(): String {
+        return "uuid ::" + uuid + "\n" +
+                "category ::" + category + "\n" +
+                "value ::" + value + "\n" +
+                "date ::" + date + "\n"
     }
 }

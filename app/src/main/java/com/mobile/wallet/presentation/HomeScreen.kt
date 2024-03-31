@@ -149,14 +149,16 @@ fun HomeScreen(navController: NavHostController, viewModel: HomeViewModel = view
         }
     ) {
         if (showBottomSheet) {
-            AddTransaction { setShowBottomSheet(false) }
+            AddTransaction(
+                callback = { setShowBottomSheet(false) },
+                success = { viewModel.refresh() })
         }
 
         Column(modifier = Modifier.padding(it)) {
             BalanceCard(uiState.total.toCurrency())
             Text(
                 text = "Transactions",
-                modifier = Modifier.padding(start = 16.dp, end = 16.dp)
+                modifier = Modifier.padding(start = 16.dp, end = 16.dp, bottom = 26.dp)
             )
             if (uiState.loading) {
                 CircularProgressIndicator()
@@ -196,7 +198,7 @@ fun HomeScreen(navController: NavHostController, viewModel: HomeViewModel = view
             }
         }
 
-       AnimatedVisibility(visible = showDialog) {
+        AnimatedVisibility(visible = showDialog) {
             AlertDialog(
                 onDismissRequest = { showDialog = false },
                 title = {

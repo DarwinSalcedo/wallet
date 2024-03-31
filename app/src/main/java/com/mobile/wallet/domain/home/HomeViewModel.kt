@@ -2,11 +2,10 @@ package com.mobile.wallet.domain.home
 
 import androidx.lifecycle.ViewModel
 import androidx.lifecycle.viewModelScope
+import com.mobile.wallet.data.core.Result
 import com.mobile.wallet.data.repository.auth.FirebaseRepository
 import com.mobile.wallet.data.repository.auth.FirebaseRepositoryImpl
-import com.mobile.wallet.data.core.Result
 import com.mobile.wallet.data.repository.transaction.TransactionRepositoryImpl
-import com.mobile.wallet.domain.models.Transaction
 import kotlinx.coroutines.delay
 import kotlinx.coroutines.flow.MutableStateFlow
 import kotlinx.coroutines.flow.StateFlow
@@ -28,11 +27,6 @@ class HomeViewModel : ViewModel() {
         }
     }
 
-    fun addTransaction(transaction: Transaction) {
-        repository.add(transaction)
-        updateUiState()
-    }
-
     private fun updateUiState() {
         _uiState.value = _uiState.value.copy(
             errorMessage = "",
@@ -47,8 +41,20 @@ class HomeViewModel : ViewModel() {
             authRepository.logout()
             delay(1000)
             _uiState.value = _uiState.value.copy(
-                navigate = true)
+                navigate = true
+            )
         }
+    }
+
+
+    fun refresh() {
+        getData()
+    }
+
+    fun resetError() {
+        _uiState.value = _uiState.value.copy(
+            errorMessage = ""
+        )
     }
 
     private fun getData() {

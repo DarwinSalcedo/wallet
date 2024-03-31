@@ -4,6 +4,8 @@ package com.mobile.wallet.presentation.components
 
 import android.util.Log
 import androidx.compose.foundation.background
+import androidx.compose.foundation.clickable
+import androidx.compose.foundation.layout.Arrangement
 import androidx.compose.foundation.layout.Box
 import androidx.compose.foundation.layout.Column
 import androidx.compose.foundation.layout.PaddingValues
@@ -21,6 +23,7 @@ import androidx.compose.foundation.text.KeyboardActions
 import androidx.compose.foundation.text.KeyboardOptions
 import androidx.compose.material.icons.Icons
 import androidx.compose.material.icons.filled.AddCircle
+import androidx.compose.material.icons.filled.Cancel
 import androidx.compose.material.icons.filled.Lightbulb
 import androidx.compose.material.icons.filled.Paid
 import androidx.compose.material3.Button
@@ -105,11 +108,10 @@ fun StepComponent(value: String) {
 }
 
 @Composable
-fun HeadingTextComponent(value: String) {
+fun HeadingTextComponent(value: String, modifier: Modifier = Modifier.fillMaxWidth()) {
     Text(
         text = value,
-        modifier = Modifier
-            .fillMaxWidth()
+        modifier = modifier
             .heightIn(),
         style = TextStyle(
             fontSize = 30.sp,
@@ -121,8 +123,16 @@ fun HeadingTextComponent(value: String) {
 }
 
 @Composable
-fun CategoryComponent(value: Pair<String, ImageVector>) {
-    Card(Modifier.padding(5.dp)) {
+fun CategoryComponent(
+    value: Pair<String, ImageVector>,
+    isSelected: Boolean,
+    onClick: () -> Unit
+) {
+    Card(
+        Modifier
+            .padding(5.dp)
+            .clickable { onClick.invoke() },
+    ) {
         Row(Modifier.padding(2.dp), verticalAlignment = Alignment.CenterVertically) {
             Icon(
                 imageVector = value.second,
@@ -136,8 +146,8 @@ fun CategoryComponent(value: Pair<String, ImageVector>) {
                     .heightIn(),
                 style = TextStyle(
                     fontSize = 16.sp,
-                    fontWeight = FontWeight.Thin,
-                    fontStyle = FontStyle.Normal
+                    fontWeight = if (isSelected) FontWeight.ExtraBold else FontWeight.Normal,
+                    fontStyle = if (isSelected) FontStyle.Italic else FontStyle.Normal
                 ), color = colorResource(id = R.color.text),
                 textAlign = TextAlign.Center
             )
@@ -363,28 +373,31 @@ fun ClickableLoginTextComponent(tryingToLogin: Boolean = true, onTextSelected: (
 @Composable
 fun DisappearingMessage(
     message: String,
+    callback: () -> Unit
 ) {
-
-    Surface(
+    Card(
         modifier = Modifier
             .fillMaxWidth()
-            .wrapContentHeight(),
-        color = Color.LightGray,
-        contentColor = Color.Black
+            .wrapContentHeight()
+            .padding(20.dp),
     ) {
-
-        Column(
-            modifier = Modifier
-                .fillMaxWidth()
-                .wrapContentHeight()
-                .padding(vertical = 16.dp)
-
+        Row(
+            Modifier.fillMaxWidth().heightIn().padding(20.dp),
+            horizontalArrangement = Arrangement.Absolute.SpaceBetween,
+            verticalAlignment = Alignment.CenterVertically
         ) {
             Text(
                 text = message,
                 modifier = Modifier.padding(horizontal = 14.dp),
                 style = MaterialTheme.typography.labelMedium
             )
+            Spacer(modifier = Modifier.width(5.dp))
+            Box(Modifier.clickable {
+                callback.invoke()
+            }
+            ) {
+                Icon(Icons.Filled.Cancel, contentDescription = "Add item")
+            }
         }
     }
 
