@@ -6,9 +6,7 @@ import kotlinx.coroutines.flow.Flow
 
 interface TransactionRepository {
 
-    var localTransactions: MutableList<Transaction>
     fun add(transaction: Transaction)
-
     fun fetch(): Flow<Result<String>>
 
 }

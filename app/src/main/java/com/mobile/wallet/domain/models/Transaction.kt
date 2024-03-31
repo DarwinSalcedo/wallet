@@ -10,7 +10,6 @@ class Transaction(
     val value: Double = 0.0,
     val date: Date = Date()
 ){
-
     fun toTransactionDto(userId: String) : TransactionDto {
         return TransactionDto(userId, uuid, category, value, date)
     }

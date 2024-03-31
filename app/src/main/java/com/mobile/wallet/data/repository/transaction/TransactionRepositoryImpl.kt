@@ -15,13 +15,13 @@ class TransactionRepositoryImpl : TransactionRepository {
 
     private val auth = FirebaseAuth.getInstance()
     private val database = Firebase.firestore
-
-    override var localTransactions = mutableListOf<Transaction>()
+    private val localTransactions = mutableListOf<Transaction>()
     val transactions get() = localTransactions.toList()
 
     override fun add(transaction: Transaction) {
 
         localTransactions.add(transaction)
+        localTransactions.sortByDescending { it.date }
 
         auth.uid.let { uuid ->
             if (uuid.isNullOrEmpty()) {
@@ -59,6 +59,7 @@ class TransactionRepositoryImpl : TransactionRepository {
                                 val transactionDto = document.toObject(TransactionDto::class.java)
                                 transactions.add(transactionDto.toTransaction())
                             }
+                            transactions.sortByDescending { it.date }
                             localTransactions.clear()
                             localTransactions.addAll(transactions)
 

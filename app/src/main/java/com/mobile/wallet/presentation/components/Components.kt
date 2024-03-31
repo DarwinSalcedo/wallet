@@ -44,6 +44,7 @@ import androidx.compose.ui.Modifier
 import androidx.compose.ui.graphics.Brush
 import androidx.compose.ui.graphics.Color
 import androidx.compose.ui.graphics.painter.Painter
+import androidx.compose.ui.graphics.vector.ImageVector
 import androidx.compose.ui.platform.LocalFocusManager
 import androidx.compose.ui.res.colorResource
 import androidx.compose.ui.res.painterResource
@@ -117,6 +118,33 @@ fun HeadingTextComponent(value: String) {
         ), color = colorResource(id = R.color.text),
         textAlign = TextAlign.Center
     )
+}
+
+@Composable
+fun CategoryComponent(value: Pair<String, ImageVector>) {
+    Card(Modifier.padding(5.dp)) {
+        Row(Modifier.padding(2.dp), verticalAlignment = Alignment.CenterVertically) {
+            Icon(
+                imageVector = value.second,
+                contentDescription = "category ${value.first}",
+            )
+            Spacer(modifier = Modifier.width(5.dp))
+            Text(
+                text = value.first,
+                modifier = Modifier
+                    .fillMaxWidth()
+                    .heightIn(),
+                style = TextStyle(
+                    fontSize = 16.sp,
+                    fontWeight = FontWeight.Thin,
+                    fontStyle = FontStyle.Normal
+                ), color = colorResource(id = R.color.text),
+                textAlign = TextAlign.Center
+            )
+        }
+
+    }
+
 }
 
 @OptIn(ExperimentalMaterial3Api::class)
@@ -456,6 +484,7 @@ fun TransactionInfoRow(category: String, date: String, value: Double) {
         }
     }
 }
+
 
 
 

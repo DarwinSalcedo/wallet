@@ -93,10 +93,7 @@ fun LoginScreen(navController: NavHostController, loginViewModel: LoginViewModel
                     navController.navigate(Screen.SignUp.id)
                 })
 
-
             }
-
-
 
             if (loginViewModel.navigate.value) {
                 navController.navigate(Screen.Home.id)

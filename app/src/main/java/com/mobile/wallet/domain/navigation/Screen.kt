@@ -6,4 +6,5 @@ sealed class Screen(val id : String) {
     object Success : Screen("success")
     object Login : Screen("login")
     object Home : Screen("home")
+    object Transaction : Screen("transaction")
 }

@@ -18,6 +18,8 @@
     <string name="password_register">Password</string>
     <string name="welcome">Welcome onBoard</string>
     <string name="welcome_message">Your account has been created successfully</string>
+    <string name="add_transaction">Add Transaction</string>
+    <string name="save_transaction">Save</string>
 
 
 </resources>

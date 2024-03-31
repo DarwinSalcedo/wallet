@@ -54,7 +54,6 @@ import com.mobile.wallet.domain.navigation.Screen
 import com.mobile.wallet.presentation.components.BalanceCard
 import com.mobile.wallet.presentation.components.TransactionCard
 import com.mobile.wallet.utils.categories
-import com.mobile.wallet.utils.dummyTransaction
 import com.mobile.wallet.utils.toCurrency
 import kotlinx.coroutines.launch
 import java.util.Locale
@@ -69,11 +68,41 @@ fun HomeScreen(navController: NavHostController, viewModel: HomeViewModel = view
     if (uiState.navigate) {
         navController.navigate(Screen.Login.id)
     }
-
+    val scope = rememberCoroutineScope()
     val listState = rememberLazyListState()
     val showButton by remember {
         derivedStateOf {
             listState.firstVisibleItemIndex > 0
+        }
+    }
+
+    val (showBottomSheet, setShowBottomSheet) = remember { mutableStateOf(false) }
+
+    AnimatedVisibility(
+        visible = showButton,
+        enter = expandHorizontally(),
+        exit = shrinkHorizontally(),
+    ) {
+        Box(modifier = Modifier.fillMaxSize()) {
+            IconButton(
+                modifier = Modifier
+                    .align(Alignment.BottomCenter)
+                    .padding(16.dp)
+                    .background(
+                        MaterialTheme.colorScheme.primary,
+                        MaterialTheme.shapes.extraLarge,
+                    ),
+                onClick = {
+                    scope.launch {
+                        listState.animateScrollToItem(0)
+                    }
+                }) {
+                Icon(
+                    imageVector = Icons.Filled.ArrowCircleUp,
+                    contentDescription = "",
+                    tint = MaterialTheme.colorScheme.onPrimary,
+                )
+            }
         }
     }
     Scaffold(
@@ -100,7 +129,7 @@ fun HomeScreen(navController: NavHostController, viewModel: HomeViewModel = view
         },
         floatingActionButton = {
             FloatingActionButton(onClick = {
-                viewModel.addTransaction(dummyTransaction())
+                setShowBottomSheet(true)
             }) {
                 Row(
                     modifier = Modifier.padding(horizontal = 16.dp),
@@ -119,7 +148,9 @@ fun HomeScreen(navController: NavHostController, viewModel: HomeViewModel = view
             }
         }
     ) {
-        val scope = rememberCoroutineScope()
+        if (showBottomSheet) {
+            AddTransaction { setShowBottomSheet(false) }
+        }
 
         Column(modifier = Modifier.padding(it)) {
             BalanceCard(uiState.total.toCurrency())
@@ -165,7 +196,7 @@ fun HomeScreen(navController: NavHostController, viewModel: HomeViewModel = view
             }
         }
 
-        if (showDialog) {
+       AnimatedVisibility(visible = showDialog) {
             AlertDialog(
                 onDismissRequest = { showDialog = false },
                 title = {
@@ -198,7 +229,7 @@ fun HomeScreen(navController: NavHostController, viewModel: HomeViewModel = view
                 },
                 confirmButton = {
                     Button(onClick = { showDialog = false }) {
-                        Text("Confirm")
+                        Text("Dismiss")
                     }
                 }
             )

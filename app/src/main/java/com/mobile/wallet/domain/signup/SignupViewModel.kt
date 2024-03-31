@@ -4,9 +4,9 @@ import androidx.compose.runtime.mutableStateOf
 import androidx.compose.runtime.neverEqualPolicy
 import androidx.lifecycle.ViewModel
 import androidx.lifecycle.viewModelScope
+import com.mobile.wallet.data.core.Result
 import com.mobile.wallet.data.repository.auth.FirebaseRepository
 import com.mobile.wallet.data.repository.auth.FirebaseRepositoryImpl
-import com.mobile.wallet.data.core.Result
 import com.mobile.wallet.domain.login.EditTextState
 import com.mobile.wallet.domain.models.User
 import com.mobile.wallet.domain.rules.Validator
@@ -35,27 +35,46 @@ class SignupViewModel : ViewModel() {
     fun onEvent(event: SignupUIEvent) {
         when (event) {
             is SignupUIEvent.NameChanged -> {
+                val nameResult = Validator.validateName(
+                    value = registrationUIState.value.name
+                )
                 registrationUIState.value = registrationUIState.value.copy(
-                    name = event.name
+                    name = event.name,
+                    nameError = if (nameResult.status) EditTextState.Success else EditTextState.Error
                 )
             }
 
             is SignupUIEvent.SurnameChanged -> {
+                val surnameResult = Validator.validateName(
+                    value = registrationUIState.value.surname
+                )
+
                 registrationUIState.value = registrationUIState.value.copy(
-                    surname = event.surname
+                    surname = event.surname,
+                    lastNameError = if (surnameResult.status) EditTextState.Success else EditTextState.Error,
                 )
             }
 
             is SignupUIEvent.EmailChanged -> {
-                registrationUIState.value = registrationUIState.value.copy(
-                    email = event.email
+                val emailResult = Validator.validateEmail(
+                    email = registrationUIState.value.email
                 )
+                registrationUIState.value = registrationUIState.value.copy(
+                    email = event.email,
+                    emailError = if (emailResult.status) EditTextState.Success else EditTextState.Error,
+
+                    )
             }
 
 
             is SignupUIEvent.PasswordChanged -> {
+                val passwordResult = Validator.validatePassword(
+                    password = registrationUIState.value.password
+                )
+
                 registrationUIState.value = registrationUIState.value.copy(
-                    password = event.password
+                    password = event.password,
+                    passwordError = if (passwordResult.status) EditTextState.Success else EditTextState.Error
                 )
             }
 
@@ -81,40 +100,23 @@ class SignupViewModel : ViewModel() {
     }
 
     private fun validateDataWithRules() {
-        val nameResult = Validator.validateName(
-            value = registrationUIState.value.name
-        )
 
-        val surnameResult = Validator.validateName(
-            value = registrationUIState.value.surname
-        )
+        println("validate nameError " + registrationUIState.value.nameError.isValid() )
+        println("validate lastNameError " + registrationUIState.value.lastNameError.isValid() )
+        println("validate emailError " + registrationUIState.value.emailError.isValid() )
+        println("validate passwordError " + registrationUIState.value.passwordError.isValid() )
 
-        val emailResult = Validator.validateEmail(
-            email = registrationUIState.value.email
-        )
-
-
-        val passwordResult = Validator.validatePassword(
-            password = registrationUIState.value.password
-        )
-
-        registrationUIState.value = registrationUIState.value.copy(
-            nameError = if (nameResult.status) EditTextState.Success else EditTextState.Error,
-            lastNameError = if (surnameResult.status) EditTextState.Success else EditTextState.Error,
-            emailError = if (emailResult.status) EditTextState.Success else EditTextState.Error,
-            passwordError = if (passwordResult.status) EditTextState.Success else EditTextState.Error
-        )
-
-
-        allValidationsPassed.value = nameResult.status && surnameResult.status &&
-                emailResult.status && passwordResult.status
+        allValidationsPassed.value = registrationUIState.value.nameError.isValid() &&
+                registrationUIState.value.lastNameError.isValid() &&
+                registrationUIState.value.emailError.isValid() &&
+                registrationUIState.value.passwordError.isValid()
 
     }
 
 
     private fun createUserInFirebase(user: User) {
         job?.cancel()
-        job =   viewModelScope.launch {
+        job = viewModelScope.launch {
             progress.value = true
 
             repository.createAccount(user).collect {

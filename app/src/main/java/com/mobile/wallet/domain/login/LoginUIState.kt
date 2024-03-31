@@ -12,4 +12,10 @@ sealed class EditTextState() {
     object Init : EditTextState()
     object Success : EditTextState()
     object Error : EditTextState()
+
+    fun isValid(): Boolean {
+        println("dsad::" + this.toString())
+        return (this is Success)
+
+    }
 }
