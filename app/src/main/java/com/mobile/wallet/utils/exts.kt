@@ -25,11 +25,11 @@ fun Double.toCurrency(): String {
 
 fun String.toValidDouble(): Double {
     if (this == "") return 0.0
-    if (this.length < 2) return this.toDouble()
+    if (this.length <= 2) return this.toDouble() / 100.0
 
     val integerPart = this.substring(0, this.length - 2)
     val decimalPart =
-        this.substring(this.length - 2).toDouble() / 100.0 // Scale by 100 for two decimal places
+        this.substring(this.length - 2).toDouble() / 100.0
     return integerPart.toDouble() + decimalPart
 
 }
