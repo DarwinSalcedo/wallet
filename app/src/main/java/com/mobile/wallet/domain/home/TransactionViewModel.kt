@@ -21,7 +21,7 @@ class TransactionViewModel : ViewModel() {
     private val _successExecution = mutableStateOf(false)
     val successExecution: State<Boolean> = _successExecution
 
-    fun validate(indexCategory: Int, value: String) {
+    fun validate(indexCategory: Int, amount: String, note: String) {
         if (indexCategory == -1) {
             error.value = "Select a category"
             return
@@ -29,12 +29,13 @@ class TransactionViewModel : ViewModel() {
 
         val category = categoryList[indexCategory]
 
-        var amount = value.toValidDouble()
-        if (!positiveCategories.contains(category.first)) {
-            amount *= -1
+        var amountCalculated = amount.toValidDouble()
+        if (!positiveCategories.contains(category.first) && (amountCalculated != 0.0)) {
+            amountCalculated *= -1
         }
 
-        val transaction = Transaction(category = category.first, value = amount)
+        val transaction =
+            Transaction(category = category.first, value = amountCalculated, note = note)
 
         viewModelScope.launch {
             repository.add(transaction).collect {

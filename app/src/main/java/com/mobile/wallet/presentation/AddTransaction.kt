@@ -11,7 +11,6 @@ import androidx.compose.foundation.layout.fillMaxWidth
 import androidx.compose.foundation.layout.height
 import androidx.compose.foundation.layout.heightIn
 import androidx.compose.foundation.layout.padding
-import androidx.compose.foundation.layout.width
 import androidx.compose.foundation.layout.wrapContentHeight
 import androidx.compose.foundation.layout.wrapContentWidth
 import androidx.compose.foundation.lazy.grid.GridCells
@@ -19,11 +18,8 @@ import androidx.compose.foundation.lazy.grid.LazyVerticalGrid
 import androidx.compose.foundation.rememberScrollState
 import androidx.compose.foundation.shape.RoundedCornerShape
 import androidx.compose.foundation.text.KeyboardOptions
-import androidx.compose.material.icons.Icons
-import androidx.compose.material.icons.filled.Check
 import androidx.compose.material3.Button
 import androidx.compose.material3.ExperimentalMaterial3Api
-import androidx.compose.material3.Icon
 import androidx.compose.material3.MaterialTheme
 import androidx.compose.material3.ModalBottomSheet
 import androidx.compose.material3.OutlinedTextField
@@ -98,20 +94,20 @@ fun AddTransaction(
                     }
 
                     Row(
+                        modifier = Modifier.fillMaxWidth(),
                         horizontalArrangement = Arrangement.Absolute.SpaceBetween,
                         verticalAlignment = Alignment.CenterVertically
                     ) {
                         HeadingTextComponent(
-                            value = "Add Transaction",
+                            value = "New Transaction",
                             modifier = Modifier.wrapContentWidth()
                         )
-                        Spacer(modifier = Modifier.width(5.dp))
                         Button(
                             onClick = {
-                                viewmodel.validate(selectedIndex.intValue, amountValue.value)
+                                viewmodel.validate(selectedIndex.intValue, amountValue.value,noteValue.value)
                             }
                         ) {
-                            Icon(Icons.Filled.Check, contentDescription = "Add item")
+                            Text(text = "SAVE")
                         }
                     }
                     if (viewmodel.error.value.isNotEmpty()) {
@@ -148,7 +144,7 @@ fun AddTransaction(
                         modifier = Modifier.fillMaxWidth(),
                         placeholder = {
                             Text(
-                                text = "optional note",
+                                text = "Optional note",
                                 modifier = Modifier
                                     .fillMaxWidth()
                                     .heightIn(),
@@ -160,7 +156,7 @@ fun AddTransaction(
                         },
                         value = noteValue.value,
                         onValueChange = {
-                            noteValue.value = it
+                            noteValue.value = it.trimIndent()
                         },
                         maxLines = 3,
                         minLines = 1,
@@ -170,11 +166,10 @@ fun AddTransaction(
                         ),
                     )
 
-
                     val columns = GridCells.Fixed(2)
                     Spacer(modifier = Modifier.height(20.dp))
                     Text(
-                        text = "Chose a category",
+                        text = "Choose a category",
                         modifier = Modifier
                             .fillMaxWidth()
                             .heightIn(),

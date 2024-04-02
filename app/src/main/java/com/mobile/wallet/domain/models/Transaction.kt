@@ -7,11 +7,12 @@ import java.util.UUID
 class Transaction(
     val uuid: String = UUID.randomUUID().toString(),
     val category: String = "",
+    val note: String = "",
     val value: Double = 0.0,
     val date: Date = Date()
 ) {
     fun toTransactionDto(userId: String): TransactionDto {
-        return TransactionDto(userId, uuid, category, value, date)
+        return TransactionDto(userId, uuid, category, note, value, date)
     }
 
     override fun toString(): String {

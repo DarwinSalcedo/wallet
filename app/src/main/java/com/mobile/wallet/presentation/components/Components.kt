@@ -22,7 +22,6 @@ import androidx.compose.foundation.text.ClickableText
 import androidx.compose.foundation.text.KeyboardActions
 import androidx.compose.foundation.text.KeyboardOptions
 import androidx.compose.material.icons.Icons
-import androidx.compose.material.icons.filled.AddCircle
 import androidx.compose.material.icons.filled.Cancel
 import androidx.compose.material.icons.filled.Lightbulb
 import androidx.compose.material.icons.filled.Paid
@@ -36,9 +35,8 @@ import androidx.compose.material3.Icon
 import androidx.compose.material3.IconButton
 import androidx.compose.material3.MaterialTheme
 import androidx.compose.material3.OutlinedTextField
-import androidx.compose.material3.Surface
+import androidx.compose.material3.OutlinedTextFieldDefaults
 import androidx.compose.material3.Text
-import androidx.compose.material3.TextFieldDefaults
 import androidx.compose.runtime.Composable
 import androidx.compose.runtime.mutableStateOf
 import androidx.compose.runtime.saveable.rememberSaveable
@@ -62,12 +60,14 @@ import androidx.compose.ui.text.input.KeyboardType
 import androidx.compose.ui.text.input.PasswordVisualTransformation
 import androidx.compose.ui.text.input.VisualTransformation
 import androidx.compose.ui.text.style.TextAlign
+import androidx.compose.ui.text.style.TextOverflow
 import androidx.compose.ui.text.withStyle
 import androidx.compose.ui.unit.dp
 import androidx.compose.ui.unit.sp
 import com.mobile.wallet.R
 import com.mobile.wallet.domain.login.EditTextState
 import com.mobile.wallet.utils.categories
+import com.mobile.wallet.utils.positiveCategories
 import com.mobile.wallet.utils.toCurrency
 
 @Composable
@@ -179,10 +179,10 @@ fun TextFieldComponent(
         modifier = Modifier
             .fillMaxWidth(),
         label = { Text(text = labelValue) },
-        colors = TextFieldDefaults.outlinedTextFieldColors(
+        colors = OutlinedTextFieldDefaults.colors(
+            cursorColor = Color.Black,
             focusedBorderColor = Color.Transparent,
             focusedLabelColor = Color.Gray,
-            cursorColor = Color.Black
         ),
         keyboardOptions = KeyboardOptions(imeAction = ImeAction.Next),
         singleLine = true,
@@ -200,7 +200,6 @@ fun TextFieldComponent(
 }
 
 
-@OptIn(ExperimentalMaterial3Api::class)
 @Composable
 fun PasswordTextFieldComponent(
     labelValue: String, painterResource: Painter,
@@ -222,10 +221,10 @@ fun PasswordTextFieldComponent(
         modifier = Modifier
             .fillMaxWidth(),
         label = { Text(text = labelValue) },
-        colors = TextFieldDefaults.outlinedTextFieldColors(
+        colors = OutlinedTextFieldDefaults.colors(
+            cursorColor = Color.Gray,
             focusedBorderColor = Color.Transparent,
             focusedLabelColor = Color.Gray,
-            cursorColor = Color.Gray
         ),
         keyboardOptions = KeyboardOptions(
             keyboardType = KeyboardType.Password,
@@ -246,22 +245,18 @@ fun PasswordTextFieldComponent(
         },
         trailingIcon = {
 
-            val iconImage = if (passwordVisible.value) {
-                Icon(
-                    painterResource(id = R.drawable.baseline_face_24),
-                    stringResource(id = R.string.hide)
-                )
-            } else {
-                Icon(
-                    painterResource(id = R.drawable.baseline_face_retouching_off_24),
-                    stringResource(id = R.string.show)
-                )
-            }
-
-
-
             IconButton(onClick = { passwordVisible.value = !passwordVisible.value }) {
-                iconImage
+                if (passwordVisible.value) {
+                    Icon(
+                        painterResource(id = R.drawable.baseline_face_24),
+                        stringResource(id = R.string.hide)
+                    )
+                } else {
+                    Icon(
+                        painterResource(id = R.drawable.baseline_face_retouching_off_24),
+                        stringResource(id = R.string.show)
+                    )
+                }
             }
 
         },
@@ -382,7 +377,10 @@ fun DisappearingMessage(
             .padding(20.dp),
     ) {
         Row(
-            Modifier.fillMaxWidth().heightIn().padding(20.dp),
+            Modifier
+                .fillMaxWidth()
+                .heightIn()
+                .padding(20.dp),
             horizontalArrangement = Arrangement.Absolute.SpaceBetween,
             verticalAlignment = Alignment.CenterVertically
         ) {
@@ -418,9 +416,7 @@ fun BalanceCard(
         )
     ) {
         Column(Modifier.padding(16.dp)) {
-            Text(
-                text = "Balance",
-            )
+
             Row(
                 verticalAlignment = Alignment.CenterVertically
             )
@@ -429,14 +425,21 @@ fun BalanceCard(
                     imageVector = Icons.Filled.Paid,
                     contentDescription = "",
                 )
-
-                Spacer(modifier = Modifier.width(16.dp))
+                Spacer(modifier = Modifier.width(5.dp))
                 Text(
-                    text = value,
-                    style = MaterialTheme.typography.headlineLarge,
-                    modifier = Modifier.padding(start = 16.dp, end = 16.dp)
+                    text = "Balance",
                 )
             }
+
+            Text(
+                text = value,
+                style = MaterialTheme.typography.headlineLarge,
+                maxLines = 1,
+                overflow = TextOverflow.Ellipsis,
+                fontWeight = FontWeight.ExtraBold,
+                textAlign = TextAlign.End
+
+            )
         }
     }
 }
@@ -446,6 +449,7 @@ fun TransactionCard(
     uuid: String,
     value: Double,
     category: String,
+    note: String,
     date: String,
 
     ) {
@@ -457,44 +461,72 @@ fun TransactionCard(
             contentColor = MaterialTheme.colorScheme.onSurface
         )
     ) {
-        TransactionInfoRow(category, date, value)
+        TransactionInfoRow(
+            category,
+            date,
+            value,
+            note
+        )
     }
 }
 
 @Composable
-fun TransactionInfoRow(category: String, date: String, value: Double) {
+fun TransactionInfoRow(category: String, date: String, value: Double, note: String) {
+    val categoryElement = categories.firstOrNull { it.first == category }
+    val plusColor = positiveCategories.contains(categoryElement?.first)
+
     Column(Modifier.padding(16.dp)) {
-        Row(
-            verticalAlignment = Alignment.CenterVertically
-        )
-        {
-            Icon(
-                imageVector = categories.firstOrNull { it.first == category }?.second
-                    ?: Icons.Filled.Lightbulb,
-                contentDescription = "",
+        Column {
+            Row(
+                verticalAlignment = Alignment.CenterVertically
             )
+            {
+                Column(
+                    modifier = Modifier.weight(6f)
+                ) {
+                    Row(verticalAlignment = Alignment.CenterVertically) {
+                        Icon(
+                            imageVector = categoryElement?.second
+                                ?: Icons.Filled.Lightbulb,
+                            contentDescription = "",
+                        )
+                        Spacer(modifier = Modifier.width(6.dp))
+                        Text(
+                            text = category,
+                            maxLines = 1,
+                            overflow = TextOverflow.Ellipsis,
+                            style = MaterialTheme.typography.titleLarge
+                        )
+                    }
+                    if (note.isNotEmpty()) {
+                        Text(
+                            text = note,
+                            maxLines = 1,
+                            overflow = TextOverflow.Ellipsis,
+                            style = MaterialTheme.typography.labelLarge
+                        )
+                    }
 
-            Spacer(modifier = Modifier.width(16.dp))
-
-            Column(
-                modifier = Modifier.weight(1f)
-            ) {
-                Text(text = category, style = MaterialTheme.typography.titleMedium)
+                }
                 Text(
-                    text = date,
-                    style = MaterialTheme.typography.bodySmall,
-                    color = MaterialTheme.colorScheme.onSurface.copy(alpha = 0.5f)
+                    modifier = Modifier.weight(4f),
+                    text = value.toCurrency(),
+                    maxLines = 1,
+                    overflow = TextOverflow.Ellipsis,
+                    style = MaterialTheme.typography.titleLarge,
+                    fontWeight = FontWeight.ExtraBold,
+                    textAlign = TextAlign.End,
+                    color = if (plusColor) Color.Green else Color.Black
+
                 )
             }
             Text(
-                text = value.toCurrency(),
-                style = MaterialTheme.typography.bodyLarge,
+                text = date,
+                style = MaterialTheme.typography.bodySmall,
+                color = MaterialTheme.colorScheme.onSurface.copy(alpha = 0.5f)
             )
-
-            Spacer(modifier = Modifier.width(16.dp))
-
-            Icon(imageVector = Icons.Filled.AddCircle, contentDescription = "")
         }
+
     }
 }
 

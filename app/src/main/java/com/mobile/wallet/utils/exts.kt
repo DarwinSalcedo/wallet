@@ -13,7 +13,9 @@ import androidx.compose.material.icons.filled.Movie
 import androidx.compose.material.icons.filled.NotInterested
 import androidx.compose.material.icons.filled.Pets
 import androidx.compose.material.icons.filled.RequestPage
+import androidx.compose.material.icons.filled.Savings
 import androidx.compose.material.icons.filled.ShoppingCart
+import androidx.compose.material.icons.filled.ShowChart
 import java.text.NumberFormat
 import java.util.Locale
 
@@ -44,9 +46,9 @@ val categories = listOf(
     "Entertainment" to Icons.Default.Movie,
     "Fun" to Icons.Default.LocalDrink,
     "Utilities" to Icons.Default.Lightbulb,
-    "Investment" to Icons.Default.Money,
+    "Investment" to Icons.Default.ShowChart,
     "Salary" to Icons.Default.Money,
-    "Saving" to Icons.Default.Money,
+    "Saving" to Icons.Default.Savings,
     "Pet" to Icons.Default.Pets,
     "Beauty" to Icons.Default.AutoAwesome,
     "Loan" to Icons.Default.RequestPage,

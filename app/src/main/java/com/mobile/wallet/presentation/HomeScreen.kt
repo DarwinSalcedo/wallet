@@ -161,10 +161,6 @@ fun HomeScreen(navController: NavHostController, viewModel: HomeViewModel = view
 
         Column(modifier = Modifier.padding(it)) {
             BalanceCard(uiState.total.toCurrency())
-            Text(
-                text = "Transactions",
-                modifier = Modifier.padding(start = 16.dp, end = 16.dp, bottom = 26.dp)
-            )
             if (uiState.loading) {
                 CircularProgressIndicator()
             }
@@ -186,6 +182,12 @@ fun HomeScreen(navController: NavHostController, viewModel: HomeViewModel = view
                 ),
                 state = listState
             ) {
+                item {
+                    Text(
+                        text = "Transactions",
+                        modifier = Modifier.padding(bottom = 16.dp)
+                    )
+                }
                 items(uiState.transactions) { transaction ->
                     Box(modifier = Modifier.clickable {
                         showDialog = true
@@ -195,6 +197,7 @@ fun HomeScreen(navController: NavHostController, viewModel: HomeViewModel = view
                             uuid = transaction.uuid,
                             value = transaction.value,
                             category = transaction.category,
+                            note = transaction.note,
                             date = transaction.date.toString()
                         )
                     }

@@ -27,14 +27,6 @@ class HomeViewModel : ViewModel() {
         }
     }
 
-    private fun updateUiState() {
-        _uiState.value = _uiState.value.copy(
-            errorMessage = "",
-            loading = false,
-            transactions = repository.transactions,
-            total = repository.transactions.sumOf { it.value }
-        )
-    }
 
     fun logout() {
         viewModelScope.launch {

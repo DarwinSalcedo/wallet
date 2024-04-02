@@ -18,7 +18,7 @@ class TransactionRepositoryImpl : TransactionRepository {
     private val localTransactions = mutableListOf<Transaction>()
     val transactions get() = localTransactions.toList()
 
-    override fun add(transaction: Transaction)  =  callbackFlow{
+    override fun add(transaction: Transaction) = callbackFlow {
 
         localTransactions.add(transaction)
         localTransactions.sortByDescending { it.date }
@@ -43,13 +43,10 @@ class TransactionRepositoryImpl : TransactionRepository {
     }
 
     override fun fetch(): Flow<Result<String>> = callbackFlow {
-        Log.e("TAG", "fetchTransactions::: ")
         auth.uid.let { uuid ->
             if (uuid.isNullOrEmpty()) {
                 trySend(Result.Failure(java.lang.Exception("Not found uuid")))
             } else {
-                Log.e("TAG", "fetchTransactions::: $uuid")
-
                 database.collection("transactions")
                     .whereEqualTo("userId", uuid)
                     .get()
@@ -61,6 +58,7 @@ class TransactionRepositoryImpl : TransactionRepository {
                                 val transactionDto = document.toObject(TransactionDto::class.java)
                                 transactions.add(transactionDto.toTransaction())
                             }
+
                             transactions.sortByDescending { it.date }
                             localTransactions.clear()
                             localTransactions.addAll(transactions)
@@ -72,7 +70,6 @@ class TransactionRepositoryImpl : TransactionRepository {
                         }
                     }
                     .addOnFailureListener {
-                        Log.d("fetchTransactions", "Exception= ${it.localizedMessage}")
                         trySend(Result.Failure(it))
                     }
             }
