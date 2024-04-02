@@ -1,6 +1,8 @@
 package com.mobile.wallet.presentation
 
 import android.annotation.SuppressLint
+import androidx.compose.foundation.gestures.Orientation
+import androidx.compose.foundation.gestures.scrollable
 import androidx.compose.foundation.layout.Arrangement
 import androidx.compose.foundation.layout.Column
 import androidx.compose.foundation.layout.Row
@@ -14,6 +16,7 @@ import androidx.compose.foundation.layout.wrapContentHeight
 import androidx.compose.foundation.layout.wrapContentWidth
 import androidx.compose.foundation.lazy.grid.GridCells
 import androidx.compose.foundation.lazy.grid.LazyVerticalGrid
+import androidx.compose.foundation.rememberScrollState
 import androidx.compose.foundation.shape.RoundedCornerShape
 import androidx.compose.foundation.text.KeyboardOptions
 import androidx.compose.material.icons.Icons
@@ -27,6 +30,7 @@ import androidx.compose.material3.OutlinedTextField
 import androidx.compose.material3.OutlinedTextFieldDefaults
 import androidx.compose.material3.Surface
 import androidx.compose.material3.Text
+import androidx.compose.material3.TextField
 import androidx.compose.material3.rememberModalBottomSheetState
 import androidx.compose.runtime.Composable
 import androidx.compose.runtime.mutableIntStateOf
@@ -66,13 +70,14 @@ fun AddTransaction(
         callback.invoke()
     }
     ModalBottomSheet(
-        sheetState = rememberModalBottomSheetState(),
+        sheetState = rememberModalBottomSheetState(true),
         content = {
             Surface(
                 modifier = Modifier
                     .fillMaxWidth()
                     .wrapContentHeight()
-                    .padding(16.dp),
+                    .padding(16.dp)
+                    .scrollable(rememberScrollState(), orientation = Orientation.Vertical),
                 shape = RoundedCornerShape(topStart = 16.dp, topEnd = 16.dp),
                 contentColor = MaterialTheme.colorScheme.onPrimary
             ) {
@@ -85,6 +90,10 @@ fun AddTransaction(
                         remember { mutableIntStateOf(-1) }
 
                     val amountValue = rememberSaveable {
+                        mutableStateOf("")
+                    }
+
+                    val noteValue = rememberSaveable {
                         mutableStateOf("")
                     }
 
@@ -133,9 +142,37 @@ fun AddTransaction(
                         textStyle = MaterialTheme.typography.headlineLarge,
                         visualTransformation = CurrencyAmountInputVisualTransformation(false),
                     )
+                    Spacer(modifier = Modifier.height(20.dp))
+
+                    TextField(
+                        modifier = Modifier.fillMaxWidth(),
+                        placeholder = {
+                            Text(
+                                text = "optional note",
+                                modifier = Modifier
+                                    .fillMaxWidth()
+                                    .heightIn(),
+                                style = TextStyle(
+                                    fontSize = 16.sp,
+                                ), color = colorResource(id = R.color.text),
+                                textAlign = TextAlign.Start
+                            )
+                        },
+                        value = noteValue.value,
+                        onValueChange = {
+                            noteValue.value = it
+                        },
+                        maxLines = 3,
+                        minLines = 1,
+                        keyboardOptions = KeyboardOptions(
+                            imeAction = ImeAction.Done,
+                            keyboardType = KeyboardType.Text
+                        ),
+                    )
+
 
                     val columns = GridCells.Fixed(2)
-                    Spacer(modifier = Modifier.height(10.dp))
+                    Spacer(modifier = Modifier.height(20.dp))
                     Text(
                         text = "Chose a category",
                         modifier = Modifier

@@ -138,7 +138,7 @@ fun HomeScreen(navController: NavHostController, viewModel: HomeViewModel = view
                     Icon(imageVector = Icons.Filled.Add, contentDescription = "")
                     AnimatedVisibility(visible = !showButton) {
                         Text(
-                            text = "Add Transaction".uppercase(Locale.getDefault()),
+                            text = "Add".uppercase(Locale.getDefault()),
                             modifier = Modifier.padding(
                                 start = 8.dp,
                             ),
@@ -151,7 +151,12 @@ fun HomeScreen(navController: NavHostController, viewModel: HomeViewModel = view
         if (showBottomSheet) {
             AddTransaction(
                 callback = { setShowBottomSheet(false) },
-                success = { viewModel.refresh() })
+                success = {
+                    viewModel.refresh()
+                    scope.launch {
+                        listState.animateScrollToItem(0)
+                    }
+                })
         }
 
         Column(modifier = Modifier.padding(it)) {
