@@ -4,17 +4,20 @@ import androidx.lifecycle.ViewModel
 import androidx.lifecycle.viewModelScope
 import com.mobile.wallet.data.core.Result
 import com.mobile.wallet.data.repository.auth.FirebaseRepository
-import com.mobile.wallet.data.repository.auth.FirebaseRepositoryImpl
-import com.mobile.wallet.data.repository.transaction.TransactionRepositoryImpl
+import com.mobile.wallet.data.repository.transaction.TransactionRepository
+import dagger.hilt.android.lifecycle.HiltViewModel
 import kotlinx.coroutines.delay
 import kotlinx.coroutines.flow.MutableStateFlow
 import kotlinx.coroutines.flow.StateFlow
 import kotlinx.coroutines.launch
+import javax.inject.Inject
 
-class HomeViewModel : ViewModel() {
+@HiltViewModel
+class HomeViewModel @Inject constructor(
+    val repository: TransactionRepository,
+    val authRepository: FirebaseRepository
+) : ViewModel() {
 
-    private val repository: TransactionRepositoryImpl = TransactionRepositoryImpl()
-    private val authRepository: FirebaseRepository = FirebaseRepositoryImpl()
     private val _uiState = MutableStateFlow(HomeUiState())
     val uiState: StateFlow<HomeUiState> = _uiState
 
@@ -61,9 +64,7 @@ class HomeViewModel : ViewModel() {
                     is Result.Failure -> {
                         _uiState.value = _uiState.value.copy(
                             errorMessage = result.error.localizedMessage,
-                            loading = false,
-                            transactions = repository.transactions,
-                            total = repository.transactions.sumOf { it.value }
+                            loading = false
                         )
                     }
 
@@ -71,8 +72,8 @@ class HomeViewModel : ViewModel() {
                         _uiState.value = _uiState.value.copy(
                             errorMessage = "",
                             loading = false,
-                            transactions = repository.transactions,
-                            total = repository.transactions.sumOf { it.value }
+                            transactions = result.data,
+                            total = result.data.sumOf { it.value }
                         )
                     }
                 }

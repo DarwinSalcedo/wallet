@@ -16,7 +16,7 @@ import androidx.compose.ui.graphics.Color
 import androidx.compose.ui.res.painterResource
 import androidx.compose.ui.res.stringResource
 import androidx.compose.ui.unit.dp
-import androidx.lifecycle.viewmodel.compose.viewModel
+import androidx.hilt.navigation.compose.hiltViewModel
 import androidx.navigation.NavHostController
 import com.mobile.wallet.R
 import com.mobile.wallet.domain.navigation.Screen
@@ -33,7 +33,10 @@ import com.mobile.wallet.presentation.components.StepComponent
 import com.mobile.wallet.presentation.components.TextFieldComponent
 
 @Composable
-fun SignUpScreen(navController: NavHostController, signupViewModel: SignupViewModel = viewModel()) {
+fun SignUpScreen(
+    navController: NavHostController,
+    signupViewModel: SignupViewModel = hiltViewModel()
+) {
 
     Box(
         modifier = Modifier.fillMaxSize(), contentAlignment = Alignment.Center
@@ -94,7 +97,7 @@ fun SignUpScreen(navController: NavHostController, signupViewModel: SignupViewMo
 
                 if (signupViewModel.errorMessage.value.isNotEmpty())
                     DisappearingMessage(signupViewModel.errorMessage.value) {
-                        signupViewModel.errorMessage.value = ""
+                        signupViewModel.resetMessage()
                     }
 
                 Spacer(modifier = Modifier.height(20.dp))

@@ -1,30 +1,29 @@
 package com.mobile.wallet.domain.login
 
+import androidx.compose.runtime.State
 import androidx.compose.runtime.mutableStateOf
-import androidx.compose.runtime.neverEqualPolicy
 import androidx.lifecycle.ViewModel
 import androidx.lifecycle.viewModelScope
-import com.mobile.wallet.data.repository.auth.FirebaseRepository
-import com.mobile.wallet.data.repository.auth.FirebaseRepositoryImpl
 import com.mobile.wallet.data.core.Result
+import com.mobile.wallet.data.repository.auth.FirebaseRepository
 import com.mobile.wallet.domain.rules.Validator
+import dagger.hilt.android.lifecycle.HiltViewModel
 import kotlinx.coroutines.launch
+import javax.inject.Inject
 
-class LoginViewModel : ViewModel() {
-
-    private val TAG = LoginViewModel::class.simpleName
+@HiltViewModel
+class LoginViewModel @Inject constructor(val repository: FirebaseRepository) : ViewModel() {
 
     var loginUIState = mutableStateOf(LoginUIState())
 
     var allValidationsPassed = mutableStateOf(false)
 
-    var errorMessage = mutableStateOf("", neverEqualPolicy())
+    var _errorMessage = mutableStateOf("")
+    val errorMessage: State<String> = _errorMessage
 
     var loginInProgress = mutableStateOf(false)
 
     var navigate = mutableStateOf(false)
-
-    private var repository: FirebaseRepository = FirebaseRepositoryImpl()
 
 
     fun onEvent(event: LoginUIEvent) {
@@ -79,13 +78,13 @@ class LoginViewModel : ViewModel() {
                 when (val result = it) {
 
                     is Result.Failure -> {
-                        errorMessage.value =
+                        _errorMessage.value =
                             result.error.localizedMessage ?: "Unexpected Error"
                         loginInProgress.value = false
                     }
 
                     is Result.Success -> {
-                        errorMessage.value = ""
+                        _errorMessage.value = ""
                         navigate.value = true
                         loginInProgress.value = false
                     }
@@ -94,6 +93,10 @@ class LoginViewModel : ViewModel() {
 
 
         }
+    }
+
+    fun resetMessage() {
+        _errorMessage.value = ""
     }
 
 }

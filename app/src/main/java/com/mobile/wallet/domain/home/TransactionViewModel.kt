@@ -5,18 +5,21 @@ import androidx.compose.runtime.mutableStateOf
 import androidx.lifecycle.ViewModel
 import androidx.lifecycle.viewModelScope
 import com.mobile.wallet.data.core.Result
-import com.mobile.wallet.data.repository.transaction.TransactionRepositoryImpl
+import com.mobile.wallet.data.repository.transaction.TransactionRepository
 import com.mobile.wallet.domain.models.Transaction
 import com.mobile.wallet.utils.categories
 import com.mobile.wallet.utils.positiveCategories
 import com.mobile.wallet.utils.toValidDouble
+import dagger.hilt.android.lifecycle.HiltViewModel
 import kotlinx.coroutines.launch
+import javax.inject.Inject
 
-class TransactionViewModel : ViewModel() {
+@HiltViewModel
+class TransactionViewModel @Inject constructor(val repository: TransactionRepository) :
+    ViewModel() {
 
     val categoryList = categories
 
-    private val repository: TransactionRepositoryImpl = TransactionRepositoryImpl()
     val error = mutableStateOf("")
     private val _successExecution = mutableStateOf(false)
     val successExecution: State<Boolean> = _successExecution

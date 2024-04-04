@@ -4,27 +4,25 @@ import android.net.Uri
 import androidx.compose.runtime.mutableStateOf
 import androidx.lifecycle.ViewModel
 import androidx.lifecycle.viewModelScope
-import com.mobile.wallet.data.repository.auth.FirebaseRepository
-import com.mobile.wallet.data.repository.auth.FirebaseRepositoryImpl
 import com.mobile.wallet.data.core.Result
+import com.mobile.wallet.data.repository.auth.FirebaseRepository
+import dagger.hilt.android.lifecycle.HiltViewModel
 import kotlinx.coroutines.Job
 import kotlinx.coroutines.delay
 import kotlinx.coroutines.launch
+import javax.inject.Inject
 
 
-class PhotoViewModel : ViewModel() {
+@HiltViewModel
+class PhotoViewModel @Inject constructor(val repository: FirebaseRepository) : ViewModel() {
 
     private var job: Job? = null
-    private val TAG = PhotoViewModel::class.simpleName
 
     var uIState = mutableStateOf(PhotoUIState())
 
     var progress = mutableStateOf(false)
 
     var navigate = mutableStateOf(false)
-
-    private var repository: FirebaseRepository = FirebaseRepositoryImpl()
-
 
     fun onEvent(event: PhotoUIEvent) {
         when (event) {
@@ -56,13 +54,6 @@ class PhotoViewModel : ViewModel() {
         }
 
 
-    }
-
-    fun setUuid(uuid: String?) {
-        println("setting uuid:::" + uuid)
-        uIState.value = uIState.value.copy(
-            photoId = uuid ?: ""
-        )
     }
 
     fun resetPostNavigation() {

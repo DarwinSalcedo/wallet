@@ -17,7 +17,9 @@ import androidx.navigation.compose.rememberNavController
 import com.mobile.wallet.domain.main.MainViewModel
 import com.mobile.wallet.domain.navigation.Screen
 import com.mobile.wallet.ui.theme.WalletappTheme
+import dagger.hilt.android.AndroidEntryPoint
 
+@AndroidEntryPoint
 class MainActivity : ComponentActivity() {
 
     override fun onCreate(savedInstanceState: Bundle?) {

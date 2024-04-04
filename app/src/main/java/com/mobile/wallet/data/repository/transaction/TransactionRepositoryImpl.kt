@@ -16,7 +16,6 @@ class TransactionRepositoryImpl : TransactionRepository {
     private val auth = FirebaseAuth.getInstance()
     private val database = Firebase.firestore
     private val localTransactions = mutableListOf<Transaction>()
-    val transactions get() = localTransactions.toList()
 
     override fun add(transaction: Transaction) = callbackFlow {
 
@@ -42,7 +41,7 @@ class TransactionRepositoryImpl : TransactionRepository {
         awaitClose {}
     }
 
-    override fun fetch(): Flow<Result<String>> = callbackFlow {
+    override fun fetch(): Flow<Result<List<Transaction>>> = callbackFlow {
         auth.uid.let { uuid ->
             if (uuid.isNullOrEmpty()) {
                 trySend(Result.Failure(java.lang.Exception("Not found uuid")))
@@ -63,7 +62,7 @@ class TransactionRepositoryImpl : TransactionRepository {
                             localTransactions.clear()
                             localTransactions.addAll(transactions)
 
-                            trySend(Result.Success(""))
+                            trySend(Result.Success(localTransactions))
 
                         } else {
                             trySend(Result.Failure(Exception("Not data")))

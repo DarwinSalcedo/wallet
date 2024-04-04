@@ -23,10 +23,7 @@ class FirebaseRepositoryImpl : FirebaseRepository {
         return auth.currentUser?.email
     }
 
-    override fun inSession(): Boolean {
-        val result = (!auth.uid.isNullOrEmpty())
-        return result
-    }
+    override fun inSession() = (!auth.uid.isNullOrEmpty())
 
     override fun logout() {
         auth.signOut()

@@ -43,6 +43,7 @@ import androidx.compose.ui.text.input.KeyboardType
 import androidx.compose.ui.text.style.TextAlign
 import androidx.compose.ui.unit.dp
 import androidx.compose.ui.unit.sp
+import androidx.hilt.navigation.compose.hiltViewModel
 import androidx.lifecycle.viewmodel.compose.viewModel
 import com.mobile.wallet.R
 import com.mobile.wallet.domain.home.TransactionViewModel
@@ -57,7 +58,7 @@ import com.mobile.wallet.presentation.components.HeadingTextComponent
 fun AddTransaction(
     callback: () -> Unit,
     success: () -> Unit,
-    viewmodel: TransactionViewModel = viewModel(),
+    viewmodel: TransactionViewModel = hiltViewModel(),
 ) {
 
     if (viewmodel.successExecution.value) {
@@ -191,7 +192,6 @@ fun AddTransaction(
                             ) {
                                 selectedIndex.value = list.value.indexOf(element)
                             }
-
                         }
                     }
                     Spacer(modifier = Modifier.height(65.dp))

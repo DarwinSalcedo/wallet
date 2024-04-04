@@ -1,22 +1,22 @@
 package com.mobile.wallet.domain.signup
 
+import androidx.compose.runtime.State
 import androidx.compose.runtime.mutableStateOf
-import androidx.compose.runtime.neverEqualPolicy
 import androidx.lifecycle.ViewModel
 import androidx.lifecycle.viewModelScope
 import com.mobile.wallet.data.core.Result
 import com.mobile.wallet.data.repository.auth.FirebaseRepository
-import com.mobile.wallet.data.repository.auth.FirebaseRepositoryImpl
 import com.mobile.wallet.domain.login.EditTextState
 import com.mobile.wallet.domain.models.User
 import com.mobile.wallet.domain.rules.Validator
+import dagger.hilt.android.lifecycle.HiltViewModel
 import kotlinx.coroutines.Job
 import kotlinx.coroutines.launch
+import javax.inject.Inject
 
 
-class SignupViewModel : ViewModel() {
-
-    private val TAG = SignupViewModel::class.simpleName
+@HiltViewModel
+class SignupViewModel @Inject constructor(val repository: FirebaseRepository) : ViewModel() {
 
     var registrationUIState = mutableStateOf(SignupUIState())
 
@@ -26,9 +26,8 @@ class SignupViewModel : ViewModel() {
 
     var navigate = mutableStateOf(false)
 
-    var errorMessage = mutableStateOf("", neverEqualPolicy())
-
-    private var repository: FirebaseRepository = FirebaseRepositoryImpl()
+    var _errorMessage = mutableStateOf("")
+    var errorMessage: State<String> = _errorMessage
 
     private var job: Job? = null
 
@@ -101,10 +100,10 @@ class SignupViewModel : ViewModel() {
 
     private fun validateDataWithRules() {
 
-        println("validate nameError " + registrationUIState.value.nameError.isValid() )
-        println("validate lastNameError " + registrationUIState.value.lastNameError.isValid() )
-        println("validate emailError " + registrationUIState.value.emailError.isValid() )
-        println("validate passwordError " + registrationUIState.value.passwordError.isValid() )
+        println("validate nameError " + registrationUIState.value.nameError.isValid())
+        println("validate lastNameError " + registrationUIState.value.lastNameError.isValid())
+        println("validate emailError " + registrationUIState.value.emailError.isValid())
+        println("validate passwordError " + registrationUIState.value.passwordError.isValid())
 
         allValidationsPassed.value = registrationUIState.value.nameError.isValid() &&
                 registrationUIState.value.lastNameError.isValid() &&
@@ -123,12 +122,12 @@ class SignupViewModel : ViewModel() {
 
                 when (val result = it) {
                     is Result.Failure -> {
-                        errorMessage.value = result.error.localizedMessage.toString()
+                        _errorMessage.value = result.error.localizedMessage.toString()
                         progress.value = false
                     }
 
                     is Result.Success -> {
-                        errorMessage.value = ""
+                        _errorMessage.value = ""
                         progress.value = true
                         navigate.value = true
                     }
@@ -141,6 +140,10 @@ class SignupViewModel : ViewModel() {
     fun resetPostNavigation() {
         this.navigate.value = false
         progress.value = false
+    }
+
+    fun resetMessage(){
+        _errorMessage.value = ""
     }
 
 

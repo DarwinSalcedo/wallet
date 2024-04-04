@@ -31,6 +31,7 @@ import androidx.compose.ui.res.stringResource
 import androidx.compose.ui.unit.dp
 import androidx.core.content.ContextCompat
 import androidx.core.content.FileProvider
+import androidx.hilt.navigation.compose.hiltViewModel
 import androidx.lifecycle.viewmodel.compose.viewModel
 import androidx.navigation.NavHostController
 import com.mobile.wallet.R
@@ -46,7 +47,7 @@ import java.util.Objects
 
 
 @Composable
-fun PhotoScreen(navController: NavHostController, photoViewModel: PhotoViewModel = viewModel()) {
+fun PhotoScreen(navController: NavHostController, photoViewModel: PhotoViewModel = hiltViewModel()) {
 
     val context = LocalContext.current
     val file = context.createImageFile()
