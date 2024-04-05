@@ -14,8 +14,6 @@ sealed class EditTextState() {
     object Error : EditTextState()
 
     fun isValid(): Boolean {
-        println("dsad::" + this.toString())
         return (this is Success)
-
     }
 }

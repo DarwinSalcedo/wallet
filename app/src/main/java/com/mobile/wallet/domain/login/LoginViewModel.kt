@@ -4,6 +4,7 @@ import androidx.compose.runtime.State
 import androidx.compose.runtime.mutableStateOf
 import androidx.lifecycle.ViewModel
 import androidx.lifecycle.viewModelScope
+import com.mobile.wallet.data.core.DispatcherProvider
 import com.mobile.wallet.data.core.Result
 import com.mobile.wallet.data.repository.auth.FirebaseRepository
 import com.mobile.wallet.domain.rules.Validator
@@ -12,9 +13,12 @@ import kotlinx.coroutines.launch
 import javax.inject.Inject
 
 @HiltViewModel
-class LoginViewModel @Inject constructor(val repository: FirebaseRepository) : ViewModel() {
+class LoginViewModel @Inject constructor(
+    val repository: FirebaseRepository,
+    private val dispatcherProvider: DispatcherProvider
+) : ViewModel() {
 
-    var loginUIState = mutableStateOf(LoginUIState())
+    var uiState = mutableStateOf(LoginUIState())
 
     var allValidationsPassed = mutableStateOf(false)
 
@@ -29,13 +33,13 @@ class LoginViewModel @Inject constructor(val repository: FirebaseRepository) : V
     fun onEvent(event: LoginUIEvent) {
         when (event) {
             is LoginUIEvent.EmailChanged -> {
-                loginUIState.value = loginUIState.value.copy(
+                uiState.value = uiState.value.copy(
                     email = event.email
                 )
             }
 
             is LoginUIEvent.PasswordChanged -> {
-                loginUIState.value = loginUIState.value.copy(
+                uiState.value = uiState.value.copy(
                     password = event.password
                 )
             }
@@ -49,15 +53,15 @@ class LoginViewModel @Inject constructor(val repository: FirebaseRepository) : V
 
     private fun validateLoginUIDataWithRules() {
         val emailResult = Validator.validateEmail(
-            email = loginUIState.value.email
+            email = uiState.value.email
         )
 
 
         val passwordResult = Validator.validatePassword(
-            password = loginUIState.value.password
+            password = uiState.value.password
         )
 
-        loginUIState.value = loginUIState.value.copy(
+        uiState.value = uiState.value.copy(
             emailError = if (emailResult.status) EditTextState.Success else EditTextState.Error,
             passwordError = if (passwordResult.status) EditTextState.Success else EditTextState.Error
         )
@@ -67,12 +71,11 @@ class LoginViewModel @Inject constructor(val repository: FirebaseRepository) : V
     }
 
     private fun login() {
-        viewModelScope.launch {
-
+        viewModelScope.launch((dispatcherProvider.io)) {
 
             loginInProgress.value = true
-            val email = loginUIState.value.email
-            val password = loginUIState.value.password
+            val email = uiState.value.email
+            val password = uiState.value.password
 
             repository.login(email, password).collect {
                 when (val result = it) {
@@ -90,8 +93,6 @@ class LoginViewModel @Inject constructor(val repository: FirebaseRepository) : V
                     }
                 }
             }
-
-
         }
     }
 

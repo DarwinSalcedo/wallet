@@ -85,12 +85,19 @@ dependencies {
     kapt("com.google.dagger:hilt-compiler:2.48")
 
     implementation("androidx.test.ext:junit-ktx:1.1.5")
-    implementation("org.mockito:mockito-core:3.11.1")
+    testImplementation("org.mockito:mockito-core:5.10.0")
+    testImplementation("org.mockito.kotlin:mockito-kotlin:5.0.0")
 
     testImplementation("junit:junit:4.13.2")
-    testImplementation("junit:junit:4.13.2")
+    testImplementation("androidx.test:core-ktx:1.5.0")
     testImplementation("org.jetbrains.kotlinx:kotlinx-coroutines-test:1.7.3")
     testImplementation("androidx.test:runner:1.5.2")
+    testImplementation("androidx.arch.core:core-testing:2.2.0")
+    testImplementation("app.cash.turbine:turbine:1.0.0")
+
+    testImplementation ("androidx.test:core:1.5.0")
+    testImplementation ("io.mockk:mockk:1.13.7")
+
 
     androidTestImplementation("androidx.test.ext:junit:1.1.5")
     androidTestImplementation("androidx.test.espresso:espresso-core:3.5.1")
