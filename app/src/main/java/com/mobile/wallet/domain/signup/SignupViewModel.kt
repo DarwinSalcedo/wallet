@@ -34,7 +34,7 @@ class SignupViewModel @Inject constructor(val repository: FirebaseRepository) : 
     fun onEvent(event: SignupUIEvent) {
         when (event) {
             is SignupUIEvent.NameChanged -> {
-                val nameResult = Validator.validateName(
+                val nameResult = Validator.validateText(
                     value = registrationUIState.value.name
                 )
                 registrationUIState.value = registrationUIState.value.copy(
@@ -44,7 +44,7 @@ class SignupViewModel @Inject constructor(val repository: FirebaseRepository) : 
             }
 
             is SignupUIEvent.SurnameChanged -> {
-                val surnameResult = Validator.validateName(
+                val surnameResult = Validator.validateText(
                     value = registrationUIState.value.surname
                 )
 

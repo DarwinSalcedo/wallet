@@ -2,7 +2,7 @@ package com.mobile.wallet.domain.rules
 
 object Validator {
 
-    fun validateName(value: String): ValidationResult {
+    fun validateText(value: String): ValidationResult {
         return ValidationResult(
             (value.isNotEmpty() && value.length >= 2)
         )
