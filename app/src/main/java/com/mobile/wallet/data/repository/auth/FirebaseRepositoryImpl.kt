@@ -3,22 +3,22 @@ package com.mobile.wallet.data.repository.auth
 import android.net.Uri
 import android.util.Log
 import com.google.firebase.auth.FirebaseAuth
-import com.google.firebase.firestore.ktx.firestore
-import com.google.firebase.ktx.Firebase
-import com.google.firebase.storage.ktx.storage
+import com.google.firebase.firestore.FirebaseFirestore
+import com.google.firebase.storage.FirebaseStorage
 import com.mobile.wallet.data.core.Result
 import com.mobile.wallet.domain.models.User
 import kotlinx.coroutines.channels.awaitClose
 import kotlinx.coroutines.flow.Flow
 import kotlinx.coroutines.flow.callbackFlow
-import java.lang.Exception
 import java.util.UUID
+import javax.inject.Inject
 
-class FirebaseRepositoryImpl : FirebaseRepository {
+class FirebaseRepositoryImpl @Inject constructor(
+    val auth: FirebaseAuth,
+    val database: FirebaseFirestore,
+    val storage: FirebaseStorage
+) : FirebaseRepository {
 
-    private val auth = FirebaseAuth.getInstance()
-    private val database = Firebase.firestore
-    private val storage = Firebase.storage.getReference("images")
     override fun getUser(): String? {
         return auth.currentUser?.email
     }
@@ -73,7 +73,7 @@ class FirebaseRepositoryImpl : FirebaseRepository {
 
     override suspend fun storeImage(uuid: String, uri: Uri): Flow<Result<String>> = callbackFlow {
 
-        storage.child("${auth.uid}/${UUID.randomUUID()}.jpg")
+        storage.getReference("images").child("${auth.uid}/${UUID.randomUUID()}.jpg")
             .putFile(uri)
             .addOnSuccessListener {
                 trySend(Result.Success(it.metadata?.path ?: ""))
